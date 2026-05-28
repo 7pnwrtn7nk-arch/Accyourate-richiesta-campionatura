@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Richiesta Campionatura</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f7f5;
+    --bg-tertiary: #f0ede8;
+    --text: #1a1a18;
+    --text-secondary: #5a5a56;
+    --text-tertiary: #9a9a94;
+    --border: rgba(0,0,0,0.12);
+    --border-md: rgba(0,0,0,0.22);
+    --border-strong: rgba(0,0,0,0.35);
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-secondary: #252523;
+      --bg-tertiary: #2e2e2b;
+      --text: #f0ede8;
+      --text-secondary: #a8a8a0;
+      --text-tertiary: #666660;
+      --border: rgba(255,255,255,0.10);
+      --border-md: rgba(255,255,255,0.18);
+      --border-strong: rgba(255,255,255,0.30);
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg-tertiary); color: var(--text); min-height: 100vh; padding: 2rem 1rem; }
+  .page { max-width: 720px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border-md); padding: 2rem 2.5rem 2.5rem; }
+
+  /* Header */
+  .form-header { border-bottom: 2px solid var(--text); padding-bottom: 1rem; margin-bottom: 1.75rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; }
+  .form-header h1 { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px; }
+  .form-header h2 { font-size: 24px; font-weight: 500; color: var(--text); }
+  .form-meta { text-align: right; flex-shrink: 0; }
+  .meta-field { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; margin-bottom: 8px; }
+  .meta-field:last-child { margin-bottom: 0; }
+  .meta-field label { font-size: 10px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+  .nr-box { font-size: 15px; font-weight: 500; color: var(--text); border-bottom: 1px solid var(--border-md); min-width: 130px; text-align: right; padding-bottom: 2px; }
+  .meta-field input[type="date"] { font-size: 13px; border: none; border-bottom: 0.5px solid var(--border-md); border-radius: 0; padding: 2px 0; background: transparent; color: var(--text); text-align: right; outline: none; font-family: inherit; }
+
+  /* Sections */
+  .section { margin-bottom: 1.75rem; }
+  .section-title { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); border-bottom: 0.5px solid var(--border); padding-bottom: 6px; margin-bottom: 14px; display: flex; align-items: center; gap: 5px; }
+  .section-title i { font-size: 13px; }
+
+  /* Grid */
+  .grid { display: grid; gap: 12px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .g1 { grid-template-columns: 1fr; }
+
+  /* Fields */
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 11px; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.04em; }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="date"],
+  .field select,
+  .field textarea {
+    font-family: inherit; font-size: 13px; color: var(--text);
+    background: var(--bg); border: 0.5px solid var(--border-md);
+    border-radius: var(--radius); padding: 7px 10px; outline: none;
+    transition: border-color 0.15s; width: 100%;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--border-strong); }
+  .field textarea { resize: vertical; min-height: 68px; line-height: 1.5; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .tab { flex: 1; padding: 9px 12px; border: 0.5px solid var(--border-md); border-radius: var(--radius); background: var(--bg); color: var(--text-secondary); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 500; text-align: center; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .tab:hover { background: var(--bg-secondary); }
+  .tab.active-top { background: #EEEDFE; border-color: #7F77DD; color: #3C3489; }
+  .tab.active-cu  { background: #E1F5EE; border-color: #1D9E75; color: #085041; }
+  .tab.active-box { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
+  @media (prefers-color-scheme: dark) {
+    .tab.active-top { background: #26215C; border-color: #7F77DD; color: #AFA9EC; }
+    .tab.active-cu  { background: #04342C; border-color: #1D9E75; color: #5DCAA5; }
+    .tab.active-box { background: #042C53; border-color: #378ADD; color: #85B7EB; }
+  }
+
+  .panel { display: none; }
+  .panel.visible { display: block; }
+
+  /* Subsection */
+  .sub { background: var(--bg-secondary); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 12px 14px; margin-bottom: 12px; }
+  .sub-label { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+
+  /* Capi table */
+  .capi-table { width: 100%; border-collapse: collapse; }
+  .capi-table th { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); padding: 0 6px 8px; text-align: left; }
+  .capi-table th:first-child { padding-left: 0; }
+  .capi-table td { padding: 4px 4px; vertical-align: middle; }
+  .capi-table td:first-child { padding-left: 0; }
+  .capi-table td:last-child { padding-right: 0; text-align: center; width: 32px; }
+  .capi-table select,
+  .capi-table input[type="number"] {
+    font-family: inherit; font-size: 13px; color: var(--text);
+    background: var(--bg); border: 0.5px solid var(--border-md);
+    border-radius: var(--radius); padding: 6px 8px; outline: none; width: 100%;
+    transition: border-color 0.15s;
+  }
+  .capi-table input[type="number"] { -moz-appearance: textfield; text-align: center; width: 60px; }
+  .capi-table input[type="number"]::-webkit-outer-spin-button,
+  .capi-table input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .capi-table select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 24px; }
+  .btn-del { background: none; border: none; cursor: pointer; color: var(--text-tertiary); font-size: 16px; padding: 4px 6px; border-radius: var(--radius); transition: all 0.15s; line-height: 1; }
+  .btn-del:hover { color: #E24B4A; background: #FCEBEB; }
+  .btn-add { display: flex; align-items: center; gap: 6px; font-family: inherit; font-size: 12px; color: var(--text-secondary); background: none; border: 0.5px dashed var(--border-md); border-radius: var(--radius); padding: 7px 12px; cursor: pointer; width: 100%; margin-top: 8px; transition: all 0.15s; }
+  .btn-add:hover { border-color: var(--border-strong); color: var(--text); background: var(--bg-secondary); }
+  .totale-row { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-secondary); }
+  .totale-val { font-size: 14px; font-weight: 500; color: var(--text); min-width: 24px; text-align: right; }
+
+  /* Toggle buttons */
+  .toggle-group { display: flex; }
+  .tog { flex: 1; padding: 7px 10px; font-family: inherit; font-size: 13px; border: 0.5px solid var(--border-md); background: var(--bg); color: var(--text-secondary); cursor: pointer; transition: all 0.15s; text-align: center; }
+  .tog:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .tog:last-child { border-radius: 0 var(--radius) var(--radius) 0; border-left: none; }
+  .tog:not(:first-child):not(:last-child) { border-left: none; }
+  .tog:hover { background: var(--bg-secondary); }
+  .tog.sel-teal { background: #E1F5EE; border-color: #1D9E75; color: #085041; font-weight: 500; }
+  @media (prefers-color-scheme: dark) {
+    .tog.sel-teal { background: #04342C; border-color: #1D9E75; color: #5DCAA5; }
+  }
+
+  /* Box cards */
+  .box-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .box-card { border: 0.5px solid var(--border-md); border-radius: var(--radius-lg); padding: 16px 12px; background: var(--bg); cursor: pointer; transition: all 0.15s; text-align: center; }
+  .box-card:hover { border-color: var(--border-strong); background: var(--bg-secondary); }
+  .box-card.sel { border-color: #378ADD; background: #E6F1FB; }
+  .box-card i { font-size: 24px; color: var(--text-tertiary); display: block; margin-bottom: 8px; }
+  .box-card.sel i { color: #185FA5; }
+  .box-card .bc-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .box-card .bc-sub { font-size: 11px; color: var(--text-tertiary); }
+  .box-card.sel .bc-title { color: #185FA5; }
+  @media (prefers-color-scheme: dark) {
+    .box-card.sel { border-color: #378ADD; background: #042C53; }
+    .box-card.sel i, .box-card.sel .bc-title { color: #85B7EB; }
+  }
+
+  /* Priority */
+  .priority-group { display: flex; gap: 8px; }
+  .pri { flex: 1; padding: 8px; font-size: 12px; font-family: inherit; border: 0.5px solid var(--border-md); border-radius: var(--radius); background: var(--bg); color: var(--text-secondary); cursor: pointer; transition: all 0.15s; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .pri:hover { background: var(--bg-secondary); }
+  .pri.p-bassa   { background: #EAF3DE; border-color: #639922; color: #3B6D11; font-weight: 500; }
+  .pri.p-normale { background: #E6F1FB; border-color: #378ADD; color: #185FA5; font-weight: 500; }
+  .pri.p-alta    { background: #FAEEDA; border-color: #BA7517; color: #854F0B; font-weight: 500; }
+  .pri.p-urgente { background: #FCEBEB; border-color: #E24B4A; color: #A32D2D; font-weight: 500; }
+  @media (prefers-color-scheme: dark) {
+    .pri.p-bassa   { background: #173404; border-color: #639922; color: #C0DD97; }
+    .pri.p-normale { background: #042C53; border-color: #378ADD; color: #85B7EB; }
+    .pri.p-alta    { background: #412402; border-color: #BA7517; color: #FAC775; }
+    .pri.p-urgente { background: #501313; border-color: #E24B4A; color: #F09595; }
+  }
+
+  /* Signatures */
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.75rem 0; }
+  .sign-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .sign-box { display: flex; flex-direction: column; gap: 6px; }
+  .sign-box label { font-size: 11px; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.04em; }
+  .sign-line { border: none; border-bottom: 0.5px solid var(--border-strong); padding: 22px 0 4px; }
+  .sign-sub { font-size: 10px; color: var(--text-tertiary); }
+
+  /* Actions */
+  .action-row { display: flex; gap: 8px; margin-top: 1.75rem; justify-content: flex-end; }
+  .btn { font-family: inherit; font-size: 13px; padding: 9px 18px; border: 0.5px solid var(--border-md); border-radius: var(--radius); background: var(--bg); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn:hover { background: var(--bg-secondary); color: var(--text); border-color: var(--border-strong); }
+  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-primary:hover { opacity: 0.85; color: var(--bg); }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 0; }
+    .page { border: none; border-radius: 0; padding: 1.5cm 2cm; box-shadow: none; }
+    .action-row { display: none; }
+    .btn-del, .btn-add { display: none; }
+    .tab { border-color: #ccc !important; }
+    .panel { display: block !important; }
+    .tabs { display: none; }
+    .sub-label::before { content: attr(data-label); }
+  }
+
+  @media (max-width: 580px) {
+    .page { padding: 1.25rem 1.25rem 2rem; }
+    .g2, .g3 { grid-template-columns: 1fr; }
+    .box-cards { grid-template-columns: 1fr; }
+    .form-header { flex-direction: column; align-items: flex-start; }
+    .form-meta { text-align: left; }
+    .meta-field { align-items: flex-start; }
+    .priority-group { flex-wrap: wrap; }
+    .pri { flex: 1 1 45%; }
+    .sign-row { grid-template-columns: 1fr; }
+    .tabs { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="form-header">
+    <div>
+      <h1>Modulo interno</h1>
+      <h2>Richiesta Campionatura</h2>
+    </div>
+    <div class="form-meta">
+      <div class="meta-field">
+        <label>N° Richiesta</label>
+        <div class="nr-box" id="nr-richiesta">RC-2026-001</div>
+      </div>
+      <div class="meta-field" style="margin-top:8px;">
+        <label>Data</label>
+        <input type="date" id="data-richiesta">
+      </div>
+    </div>
+  </div>
+
+  <!-- RICHIEDENTE -->
+  <div class="section">
+    <div class="section-title"><i class="ti ti-user"></i>Dati richiedente</div>
+    <div class="grid g2">
+      <div class="field"><label>Nome e Cognome</label><input type="text" placeholder="es. Mario Rossi"></div>
+      <div class="field"><label>Reparto / Funzione</label><input type="text" placeholder="es. R&D, Produzione…"></div>
+      <div class="field"><label>Email</label><input type="email" placeholder="nome@azienda.it"></div>
+      <div class="field"><label>Telefono / Interno</label><input type="text" placeholder="es. +39 06 123456"></div>
+    </div>
+  </div>
+
+  <!-- COMPONENTE -->
+  <div class="section">
+    <div class="section-title"><i class="ti ti-shirt"></i>Componente oggetto della campionatura</div>
+    <div class="tabs">
+      <button class="tab active-top" onclick="switchTab('top')"><i class="ti ti-shirt"></i>Top tessile</button>
+      <button class="tab" onclick="switchTab('cu')"><i class="ti ti-cpu"></i>Control Unit (CU)</button>
+      <button class="tab" onclick="switchTab('box')"><i class="ti ti-package"></i>Box spedizione</button>
+    </div>
+
+    <!-- TOP -->
+    <div id="panel-top" class="panel visible">
+      <div class="sub">
+        <div class="sub-label"><i class="ti ti-ruler-measure"></i>Capi richiesti</div>
+        <table class="capi-table">
+          <thead><tr>
+            <th style="width:68px;">Qtà</th>
+            <th style="width:38%;">Sesso</th>
+            <th>Taglia</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="capi-body"></tbody>
+        </table>
+        <button class="btn-add" onclick="addRow()"><i class="ti ti-plus"></i> Aggiungi riga</button>
+        <div class="totale-row">
+          <span>Totale capi</span>
+          <span class="totale-val" id="totale-capi">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CU -->
+    <div id="panel-cu" class="panel">
+      <div class="sub">
+        <div class="sub-label"><i class="ti ti-cpu"></i>Sensoristica</div>
+        <div class="grid g2" style="margin-bottom:12px;">
+          <div class="field"><label>Modello</label><input type="text" placeholder="es. CU-ACC-003"></div>
+          <div class="field"><label>Versione FW</label><input type="text" placeholder="es. 1.4.2"></div>
+        </div>
+        <div class="field">
+          <label>Tipo di batteria</label>
+          <div class="toggle-group">
+            <button class="tog" onclick="toggleGroup(this,'sel-teal')">180 mAh</button>
+            <button class="tog" onclick="toggleGroup(this,'sel-teal')">270 mAh</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOX -->
+    <div id="panel-box" class="panel">
+      <div class="sub">
+        <div class="sub-label"><i class="ti ti-package"></i>Tipo di box</div>
+        <div class="box-cards">
+          <div class="box-card" onclick="selectBox(this)">
+            <i class="ti ti-box"></i>
+            <div class="bc-title">Standard</div>
+            <div class="bc-sub">Confezione base</div>
+          </div>
+          <div class="box-card" onclick="selectBox(this)">
+            <i class="ti ti-gift"></i>
+            <div class="bc-title">Starter Pack</div>
+            <div class="bc-sub">Kit primo utilizzo</div>
+          </div>
+          <div class="box-card" onclick="selectBox(this)">
+            <i class="ti ti-refresh"></i>
+            <div class="bc-title">Refill</div>
+            <div class="bc-sub">Ricambio / riordino</div>
+          </div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:0;">
+        <label>Note di configurazione</label>
+        <textarea placeholder="Personalizzazioni, branding, contenuto specifico del box, ecc."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETTAGLI -->
+  <div class="section">
+    <div class="section-title"><i class="ti ti-list-details"></i>Dettagli e scopo</div>
+    <div class="grid g2">
+      <div class="field"><label>Uso previsto</label>
+        <select>
+          <option value="">— seleziona —</option>
+          <option>Validazione tecnica interna</option>
+          <option>Test su paziente / utente</option>
+          <option>Omologazione / certificazione</option>
+          <option>Demo commerciale</option>
+          <option>Confronto fornitore</option>
+          <option>Altro</option>
+        </select>
+      </div>
+      <div class="field"><label>Data richiesta consegna</label><input type="date"></div>
+    </div>
+    <div style="margin-top:14px;">
+      <label style="font-size:11px; font-weight:500; color:var(--text-secondary); display:block; margin-bottom:7px; letter-spacing:0.04em;">Priorità</label>
+      <div class="priority-group">
+        <button class="pri" onclick="setPriority(this,'bassa')"><i class="ti ti-circle-dot"></i> Bassa</button>
+        <button class="pri p-normale" onclick="setPriority(this,'normale')"><i class="ti ti-circle-half-2"></i> Normale</button>
+        <button class="pri" onclick="setPriority(this,'alta')"><i class="ti ti-alert-circle"></i> Alta</button>
+        <button class="pri" onclick="setPriority(this,'urgente')"><i class="ti ti-alert-triangle"></i> Urgente</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px;">
+      <label>Obiettivo della campionatura / note</label>
+      <textarea placeholder="Descrivi il test previsto, criteri di accettazione, riferimenti a specifiche interne, ecc."></textarea>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sign-row">
+    <div class="sign-box">
+      <label>Firma richiedente</label>
+      <div class="sign-line"></div>
+      <span class="sign-sub">Data _______________</span>
+    </div>
+    <div class="sign-box">
+      <label>Approvazione responsabile</label>
+      <div class="sign-line"></div>
+      <span class="sign-sub">Data _______________</span>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn" onclick="resetForm()"><i class="ti ti-refresh"></i> Nuovo modulo</button>
+    <button class="btn btn-primary" onclick="window.print()"><i class="ti ti-printer"></i> Stampa / Salva PDF</button>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('data-richiesta').value = new Date().toISOString().split('T')[0];
+  let counter = parseInt(localStorage.getItem('rc_counter') || '1');
+  function updateNr() {
+    document.getElementById('nr-richiesta').textContent = 'RC-' + new Date().getFullYear() + '-' + String(counter).padStart(3,'0');
+  }
+  updateNr();
+
+  const TAGLIE = ['XS','S','M','L','XL','XXL','Custom'];
+  const SESSI  = [{val:'donna',label:'Donna'},{val:'uomo',label:'Uomo'},{val:'unisex',label:'Unisex'}];
+
+  function addRow(qty, sesso, taglia) {
+    const tbody = document.getElementById('capi-body');
+    const tr = document.createElement('tr');
+    const sexOpts = SESSI.map(s => `<option value="${s.val}"${sesso===s.val?' selected':''}>${s.label}</option>`).join('');
+    const tagOpts = '<option value="">— taglia —</option>' + TAGLIE.map(t => `<option${taglia===t?' selected':''}>${t}</option>`).join('');
+    tr.innerHTML = `
+      <td><input type="number" min="1" max="999" value="${qty||1}" oninput="updateTotale()"></td>
+      <td><select>${sexOpts}</select></td>
+      <td><select>${tagOpts}</select></td>
+      <td><button class="btn-del" onclick="deleteRow(this)" title="Rimuovi"><i class="ti ti-x"></i></button></td>`;
+    tbody.appendChild(tr);
+    updateTotale();
+  }
+
+  function deleteRow(btn) { btn.closest('tr').remove(); updateTotale(); }
+
+  function updateTotale() {
+    let tot = 0;
+    document.querySelectorAll('#capi-body input[type="number"]').forEach(i => tot += parseInt(i.value)||0);
+    document.getElementById('totale-capi').textContent = tot;
+  }
+
+  addRow(1,'donna','S');
+
+  function switchTab(tab) {
+    ['top','cu','box'].forEach(t => document.getElementById('panel-'+t).classList.toggle('visible', t===tab));
+    document.querySelectorAll('.tab').forEach((btn,i) => {
+      const tabs = ['top','cu','box'];
+      btn.className = 'tab' + (tabs[i]===tab ? ' active-'+tabs[i] : '');
+    });
+  }
+
+  function toggleGroup(btn, cls) {
+    btn.closest('.toggle-group').querySelectorAll('.tog').forEach(b => b.className='tog');
+    btn.classList.add(cls);
+  }
+
+  function selectBox(card) {
+    card.closest('.box-cards').querySelectorAll('.box-card').forEach(c => c.classList.remove('sel'));
+    card.classList.add('sel');
+  }
+
+  function setPriority(btn, level) {
+    document.querySelectorAll('.pri').forEach(b => b.className='pri');
+    btn.classList.add('p-'+level);
+  }
+
+  function resetForm() {
+    counter++;
+    localStorage.setItem('rc_counter', counter);
+    updateNr();
+    document.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => el.value='');
+    document.querySelectorAll('input[type="date"]').forEach(el => el.value='');
+    document.getElementById('data-richiesta').value = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('select').forEach(el => el.selectedIndex=0);
+    document.getElementById('capi-body').innerHTML='';
+    addRow(1,'donna','S');
+    document.querySelectorAll('.tog').forEach(b => b.className='tog');
+    document.querySelectorAll('.box-card').forEach(c => c.classList.remove('sel'));
+    document.querySelectorAll('.pri').forEach(b => b.className='pri');
+    document.querySelectorAll('.pri')[1].classList.add('p-normale');
+    switchTab('top');
+  }
+</script>
+</body>
+</html>
