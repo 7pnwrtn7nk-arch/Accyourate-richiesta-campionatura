@@ -189,7 +189,10 @@
 
   <div class="archive-strip">
     <span><i class="ti ti-archive"></i>&nbsp; Richieste salvate: <strong id="archive-count">0</strong></span>
-    <button onclick="showArchive()">Visualizza storico</button>
+    <div style="display:flex;gap:12px;">
+      <button onclick="showArchive()">Visualizza storico</button>
+      <button onclick="resetCounter()" style="color:#E24B4A;">Reset contatore</button>
+    </div>
   </div>
 
   <div class="section">
@@ -286,7 +289,7 @@
       <div class="field"><label>Uso previsto</label>
         <select><option value="">— seleziona —</option><option>Validazione tecnica interna</option><option>Test su paziente / utente</option><option>Omologazione / certificazione</option><option>Demo commerciale</option><option>Confronto fornitore</option><option>Altro</option></select>
       </div>
-      <div class="field"><label>Data richiesta consegna</label><input type="date"></div>
+      <div class="field"><label>Data richiesta consegna / spedizione</label><input type="date"></div>
     </div>
     <div style="margin-top:14px;">
       <label style="font-size:11px;font-weight:500;color:var(--text-secondary);display:block;margin-bottom:7px;">Priorità</label>
@@ -310,7 +313,6 @@
     <div class="sign-box">
       <label>Firma / Timbro responsabile</label>
       <div class="sign-line"></div>
-      <span class="sign-sub">Data _______________</span>
     </div>
   </div>
 
@@ -337,6 +339,14 @@
   document.getElementById('archive-count').textContent = archive.length;
 
   function generaDocumento() {
+    // validazione minima
+    const nome = document.querySelector('input[placeholder="es. Mario Rossi"]').value.trim();
+    const topRighe = document.querySelectorAll('#top-body tr').length;
+    const cuRighe  = document.querySelectorAll('#cu-body tr').length;
+    const boxTot   = parseInt(document.getElementById('box-totale').textContent) || 0;
+    if (!nome) { alert('Inserisci almeno il nome del richiedente prima di generare il documento.'); return; }
+    if (topRighe === 0 && cuRighe === 0 && boxTot === 0) { alert('Il modulo è vuoto: aggiungi almeno un prodotto (top, CU o box) prima di generare.'); return; }
+
     const nr = updateNr();
     const entry = { nr, data: document.getElementById('data-richiesta').value, ts: new Date().toISOString() };
     archive.push(entry);
@@ -347,6 +357,16 @@
     const prevTitle = document.title;
     document.title = nr;
     setTimeout(() => { window.print(); document.title = prevTitle; updateNr(); }, 100);
+  }
+
+  function resetCounter() {
+    if (!confirm('Vuoi azzerare il contatore delle richieste e lo storico salvato?\nQuesta operazione non può essere annullata.')) return;
+    counter = 1;
+    archive = [];
+    localStorage.setItem('rc_counter', counter);
+    localStorage.setItem('rc_archive', JSON.stringify(archive));
+    document.getElementById('archive-count').textContent = 0;
+    updateNr();
   }
 
   function showArchive() {
@@ -451,7 +471,7 @@
     document.getElementById('data-richiesta').value=new Date().toISOString().split('T')[0];
     document.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
     document.getElementById('btn-genera').disabled=false;
-    clearTables(); addTopRow(1,'donna','S'); addCURow(1);
+    clearTables();
     document.querySelectorAll('.kit-card').forEach(c=>c.className='kit-card');
     document.getElementById('kit-summary').classList.remove('visible');
     resetBoxQty();
@@ -461,7 +481,7 @@
     switchTab('top'); updateNr();
   }
 
-  addTopRow(1,'donna','S'); addCURow(1); updateBadges();
+  updateBadges();
 </script>
 </body>
 </html>
