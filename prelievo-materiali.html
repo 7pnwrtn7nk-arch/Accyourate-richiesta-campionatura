@@ -156,8 +156,21 @@
     body { background:white; padding:0; }
     .page { border:none; border-radius:0; padding:1.5cm 2cm; }
     .action-row, .load-strip, .btn-add, .btn-del, .work-tabs, .disp-toggle { display:none !important; }
-    .work-panel { display:block !important; }
     ::placeholder { color:transparent !important; opacity:0 !important; }
+
+    /* stampa prelievo: mostra solo panel-pick, nascondi prod */
+    body.print-pick #panel-pick { display:block !important; }
+    body.print-pick #panel-prod { display:none !important; }
+
+    /* stampa produzione: mostra solo panel-prod, nascondi pick */
+    body.print-prod #panel-prod { display:block !important; }
+    body.print-prod #panel-pick { display:none !important; }
+
+    /* nascondi righe "non disponibile" nella stampa prelievo */
+    body.print-pick tr.row-no { display:none !important; }
+
+    /* nascondi tab badge e work-tabs in stampa */
+    .wtab-badge { display:none !important; }
   }
   @media (max-width:600px) {
     .page { padding:1.25rem 1rem 2rem; }
@@ -434,7 +447,6 @@
 
     if (state === 'no') {
       addProdRow(id);
-      switchWorkTab('prod');
     } else {
       removeProdRow(id);
     }
@@ -559,12 +571,16 @@
   }
 
   function stampa(tab) {
-    switchWorkTab(tab);
     const rc = document.getElementById('nr-display').textContent;
     const suffix = tab === 'prod' ? '-PROD' : '-PM';
     const prevTitle = document.title;
     document.title = (rc !== '—' ? rc : 'Scheda') + suffix;
-    setTimeout(() => { window.print(); document.title = prevTitle; }, 150);
+    document.body.classList.add('print-' + tab);
+    setTimeout(() => {
+      window.print();
+      document.body.classList.remove('print-pick', 'print-prod');
+      document.title = prevTitle;
+    }, 150);
   }
 </script>
 </body>
