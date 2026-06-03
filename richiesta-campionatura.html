@@ -339,7 +339,6 @@
   document.getElementById('archive-count').textContent = archive.length;
 
   function generaDocumento() {
-    // validazione minima
     const nome = document.querySelector('input[placeholder="es. Mario Rossi"]').value.trim();
     const topRighe = document.querySelectorAll('#top-body tr').length;
     const cuRighe  = document.querySelectorAll('#cu-body tr').length;
@@ -348,12 +347,66 @@
     if (topRighe === 0 && cuRighe === 0 && boxTot === 0) { alert('Il modulo è vuoto: aggiungi almeno un prodotto (top, CU o box) prima di generare.'); return; }
 
     const nr = updateNr();
-    const entry = { nr, data: document.getElementById('data-richiesta').value, ts: new Date().toISOString() };
+
+    // raccogli dati completi per la scheda prelievo
+    const topData = [];
+    document.querySelectorAll('#top-body tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      const qty   = parseInt(cells[0].querySelector('input').value) || 1;
+      const sesso = cells[1].querySelector('select').value;
+      const taglia= cells[2].querySelector('select').value;
+      topData.push({ qty, sesso, taglia });
+    });
+
+    const cuData = [];
+    document.querySelectorAll('#cu-body tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      const qty   = parseInt(cells[0].querySelector('input').value) || 1;
+      const refBtn= [...cells[1].querySelectorAll('.ctog-btn')].find(b => b.classList.contains('on-teal'));
+      const fwBtn = [...cells[2].querySelectorAll('.ctog-btn')].find(b => b.classList.contains('on-purple'));
+      const battBtn=[...cells[3].querySelectorAll('.ctog-btn')].find(b => b.classList.contains('on-blue'));
+      cuData.push({
+        qty,
+        ref:  refBtn  ? 'AYR-CU-' + refBtn.textContent.trim()  : 'AYR-CU-',
+        fw:   fwBtn   ? 'FW ' + fwBtn.textContent.trim()        : '',
+        batt: battBtn ? battBtn.textContent.trim() + ' mAh'     : ''
+      });
+    });
+
+    const boxData = {
+      standard: parseInt(document.getElementById('qty-standard').textContent) || 0,
+      starter:  parseInt(document.getElementById('qty-starter').textContent)  || 0,
+      refill:   parseInt(document.getElementById('qty-refill').textContent)   || 0
+    };
+
+    const inputs = document.querySelectorAll('.grid.g2 .field input[type="text"], .grid.g2 .field input[type="email"]');
+    const fullData = {
+      nr,
+      data:        document.getElementById('data-richiesta').value,
+      richiedente: nome,
+      reparto:     inputs[1] ? inputs[1].value : '',
+      top:  topData,
+      cu:   cuData,
+      box:  boxData,
+      ts:   new Date().toISOString()
+    };
+
+    // salva nel localStorage sia nell'archivio che come dato completo
+    const entry = { nr, data: fullData.data, ts: fullData.ts };
     archive.push(entry);
     localStorage.setItem('rc_archive', JSON.stringify(archive));
+    localStorage.setItem('rc_data_' + nr, JSON.stringify(fullData));
     document.getElementById('archive-count').textContent = archive.length;
     counter++;
     localStorage.setItem('rc_counter', counter);
+
+    // scarica automaticamente il file dati JSON per il magazziniere
+    const blob = new Blob([JSON.stringify(fullData, null, 2)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = nr + '.json'; a.click();
+    URL.revokeObjectURL(url);
+
     const prevTitle = document.title;
     document.title = nr;
     setTimeout(() => { window.print(); document.title = prevTitle; updateNr(); }, 100);
