@@ -451,6 +451,12 @@
   function deleteArchiveEntry(index) {
     archive.splice(index, 1);
     localStorage.setItem('rc_archive', JSON.stringify(archive));
+
+    // il prossimo numero = voci rimaste + 1
+    counter = archive.length + 1;
+    localStorage.setItem('rc_counter', counter);
+    updateNr();
+
     document.getElementById('archive-count').textContent = archive.length;
     renderArchiveList(document.getElementById('archive-list'));
   }
@@ -473,6 +479,9 @@
         archive.sort((a,b) => a.nr.localeCompare(b.nr));
         localStorage.setItem('rc_archive', JSON.stringify(archive));
         localStorage.setItem('rc_data_' + data.nr, JSON.stringify(data));
+        counter = archive.length + 1;
+        localStorage.setItem('rc_counter', counter);
+        updateNr();
         document.getElementById('archive-count').textContent = archive.length;
         renderArchiveList(document.getElementById('archive-list'));
       } catch {
