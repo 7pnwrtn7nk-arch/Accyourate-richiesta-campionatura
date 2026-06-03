@@ -423,9 +423,68 @@
   }
 
   function showArchive() {
-    if (!archive.length) { alert('Nessuna richiesta salvata ancora.'); return; }
-    const lines = archive.map(e => e.nr + '  |  ' + e.data).join('\n');
-    alert('Richieste salvate:\n\n' + lines);
+    const modal = document.getElementById('archive-modal');
+    const list  = document.getElementById('archive-list');
+    modal.style.display = 'flex';
+    renderArchiveList(list);
+  }
+
+  function renderArchiveList(list) {
+    if (!archive.length) {
+      list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-tertiary);font-size:13px;">Nessuna richiesta salvata.</div>';
+      return;
+    }
+    list.innerHTML = archive.map((e, i) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-secondary);border:0.5px solid var(--border);border-radius:var(--radius);padding:10px 12px;gap:10px;">
+        <div>
+          <span style="font-size:13px;font-weight:500;color:var(--text);font-family:monospace;">${e.nr}</span>
+          <span style="font-size:11px;color:var(--text-tertiary);margin-left:10px;">${e.data || ''}</span>
+        </div>
+        <button onclick="deleteArchiveEntry(${i})" style="background:none;border:0.5px solid var(--border-md);border-radius:6px;cursor:pointer;color:var(--text-tertiary);font-size:12px;padding:4px 8px;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all 0.15s;"
+          onmouseover="this.style.background='#FCEBEB';this.style.color='#E24B4A';this.style.borderColor='#E24B4A';"
+          onmouseout="this.style.background='none';this.style.color='var(--text-tertiary)';this.style.borderColor='var(--border-md)';">
+          <i class="ti ti-trash"></i> Elimina
+        </button>
+      </div>`).join('');
+  }
+
+  function deleteArchiveEntry(index) {
+    archive.splice(index, 1);
+    localStorage.setItem('rc_archive', JSON.stringify(archive));
+    document.getElementById('archive-count').textContent = archive.length;
+    renderArchiveList(document.getElementById('archive-list'));
+  }
+
+  function importArchiveEntry(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!data.nr) throw new Error();
+        // controlla se esiste già
+        if (archive.find(a => a.nr === data.nr)) {
+          alert('La richiesta ' + data.nr + ' è già presente nello storico.');
+          return;
+        }
+        archive.push({ nr: data.nr, data: data.data, ts: data.ts || new Date().toISOString() });
+        // ordina per numero RC
+        archive.sort((a,b) => a.nr.localeCompare(b.nr));
+        localStorage.setItem('rc_archive', JSON.stringify(archive));
+        localStorage.setItem('rc_data_' + data.nr, JSON.stringify(data));
+        document.getElementById('archive-count').textContent = archive.length;
+        renderArchiveList(document.getElementById('archive-list'));
+      } catch {
+        alert('File non riconosciuto. Assicurati di selezionare un file .json generato da questo modulo.');
+      }
+    };
+    reader.readAsText(file);
+    input.value = '';
+  }
+
+  function closeArchive() {
+    document.getElementById('archive-modal').style.display = 'none';
   }
 
   const STARTER_TOP = [
@@ -536,5 +595,22 @@
 
   updateBadges();
 </script>
-</body>
+<!-- Modale storico -->
+<div id="archive-modal" onclick="if(event.target===this)closeArchive()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border-md);padding:1.5rem;max-width:520px;width:90%;max-height:80vh;display:flex;flex-direction:column;gap:1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;font-weight:500;color:var(--text);">Storico richieste</span>
+      <button onclick="closeArchive()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-tertiary);line-height:1;padding:2px 6px;">×</button>
+    </div>
+    <div id="archive-list" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px;"></div>
+    <div style="border-top:0.5px solid var(--border);padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <span style="font-size:11px;color:var(--text-tertiary);">Il contatore non viene modificato eliminando le righe.</span>
+      <button onclick="document.getElementById('import-json').click()"
+        style="font-family:inherit;font-size:12px;padding:6px 12px;background:var(--bg-secondary);border:0.5px solid var(--border-md);border-radius:var(--radius);cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;gap:5px;white-space:nowrap;">
+        <i class="ti ti-upload"></i> Importa file RC
+      </button>
+    </div>
+  </div>
+</div>
+<input type="file" id="import-json" accept=".json" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" onchange="importArchiveEntry(this)">
 </html>
