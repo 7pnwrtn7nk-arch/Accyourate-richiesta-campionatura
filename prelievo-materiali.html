@@ -17,73 +17,103 @@
     :root { --bg:#1c1c1a; --bg-secondary:#252523; --bg-tertiary:#2e2e2b; --text:#f0ede8; --text-secondary:#a8a8a0; --text-tertiary:#666660; --border:rgba(255,255,255,0.10); --border-md:rgba(255,255,255,0.18); --border-strong:rgba(255,255,255,0.30); }
   }
   body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg-tertiary); color:var(--text); min-height:100vh; padding:2rem 1rem; }
-  .page { max-width:780px; margin:0 auto; background:var(--bg); border-radius:var(--radius-lg); border:0.5px solid var(--border-md); padding:2rem 2.5rem 2.5rem; }
+  .page { max-width:820px; margin:0 auto; background:var(--bg); border-radius:var(--radius-lg); border:0.5px solid var(--border-md); padding:2rem 2.5rem 2.5rem; }
 
   /* Header */
   .form-header { border-bottom:2px solid var(--text); padding-bottom:1rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; }
   .form-header h1 { font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px; }
-  .form-header h2 { font-size:22px; font-weight:500; color:var(--text); }
+  .form-header h2 { font-size:22px; font-weight:500; }
   .form-meta { text-align:right; flex-shrink:0; }
   .meta-field { display:flex; flex-direction:column; align-items:flex-end; gap:3px; margin-bottom:8px; }
   .meta-field:last-child { margin-bottom:0; }
   .meta-field label { font-size:10px; font-weight:500; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.1em; }
-  .nr-display { font-size:15px; font-weight:500; color:var(--text); border-bottom:1px solid var(--border-md); min-width:130px; text-align:right; padding-bottom:2px; }
+  .nr-display { font-size:15px; font-weight:500; border-bottom:1px solid var(--border-md); min-width:130px; text-align:right; padding-bottom:2px; }
+  .meta-field input[type="date"] { font-size:13px; border:none; border-bottom:0.5px solid var(--border-md); border-radius:0; padding:2px 0; background:transparent; color:var(--text); text-align:right; outline:none; font-family:inherit; }
 
-  /* FIFO banner */
+  /* FIFO */
   .fifo-banner { display:flex; align-items:center; gap:10px; background:#FAEEDA; border:0.5px solid #BA7517; border-radius:var(--radius); padding:10px 14px; margin-bottom:1.5rem; font-size:12px; color:#854F0B; font-weight:500; }
   .fifo-banner i { font-size:16px; flex-shrink:0; }
   @media (prefers-color-scheme:dark) { .fifo-banner { background:#412402; border-color:#BA7517; color:#FAC775; } }
 
-  /* Load RC */
-  .load-strip { display:flex; gap:8px; align-items:center; background:var(--bg-secondary); border:0.5px solid var(--border); border-radius:var(--radius); padding:12px 14px; margin-bottom:1.5rem; }
+  /* Load */
+  .load-strip { display:flex; gap:8px; align-items:center; background:var(--bg-secondary); border:0.5px solid var(--border); border-radius:var(--radius); padding:12px 14px; margin-bottom:1.5rem; flex-wrap:wrap; }
   .load-strip label { font-size:11px; font-weight:500; color:var(--text-secondary); white-space:nowrap; }
-  .load-strip input { flex:1; font-family:monospace; font-size:13px; color:var(--text); background:var(--bg); border:0.5px solid var(--border-md); border-radius:var(--radius); padding:7px 10px; outline:none; text-transform:uppercase; letter-spacing:0.06em; }
-  .load-strip input:focus { border-color:var(--border-strong); }
   .btn-load { font-family:inherit; font-size:13px; padding:8px 16px; background:var(--text); color:var(--bg); border:none; border-radius:var(--radius); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:opacity 0.15s; }
   .btn-load:hover { opacity:0.82; }
-  .load-status { font-size:12px; color:var(--text-tertiary); white-space:nowrap; }
-  .load-status.ok  { color:#1D9E75; }
-  .load-status.err { color:#E24B4A; }
+  .load-status { font-size:12px; }
+  .load-status.ok  { color:#1D9E75; font-weight:500; }
+  .load-status.err { color:#E24B4A; font-weight:500; }
 
-  /* Info header */
+  /* Info grid */
   .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
   .info-field { display:flex; flex-direction:column; gap:4px; }
   .info-field label { font-size:11px; font-weight:500; color:var(--text-secondary); letter-spacing:0.04em; }
   .info-val { font-size:13px; color:var(--text); background:var(--bg-secondary); border:0.5px solid var(--border); border-radius:var(--radius); padding:7px 10px; min-height:35px; }
-  .info-val.editable { background:var(--bg); border-color:var(--border-md); }
-  input.info-val, select.info-val { font-family:inherit; outline:none; width:100%; }
-  input.info-val:focus, select.info-val:focus { border-color:var(--border-strong); }
+  input.info-val { font-family:inherit; outline:none; width:100%; background:var(--bg); border-color:var(--border-md); }
+  input.info-val:focus { border-color:var(--border-strong); }
 
   /* Section */
   .section { margin-bottom:1.5rem; }
   .section-title { font-size:10px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-tertiary); border-bottom:0.5px solid var(--border); padding-bottom:6px; margin-bottom:12px; display:flex; align-items:center; gap:5px; }
-  .section-title i { font-size:13px; }
 
-  /* Picking table */
+  /* Work tabs */
+  .work-tabs { display:flex; gap:6px; margin-bottom:14px; }
+  .wtab { padding:9px 18px; border:0.5px solid var(--border-md); border-radius:var(--radius); background:var(--bg); color:var(--text-secondary); cursor:pointer; font-family:inherit; font-size:13px; font-weight:500; transition:all 0.15s; display:flex; align-items:center; gap:7px; }
+  .wtab:hover { background:var(--bg-secondary); }
+  .wtab.active-pick { background:#E1F5EE; border-color:#1D9E75; color:#085041; }
+  .wtab.active-prod { background:#FCEBEB; border-color:#E24B4A; color:#A32D2D; }
+  .wtab-badge { font-size:10px; font-weight:600; padding:1px 7px; border-radius:20px; }
+  .wtab.active-pick .wtab-badge { background:#1D9E75; color:#fff; }
+  .wtab.active-prod .wtab-badge { background:#E24B4A; color:#fff; }
+  .wtab .wtab-badge:empty { display:none; }
+  @media (prefers-color-scheme:dark) {
+    .wtab.active-pick { background:#04342C; border-color:#1D9E75; color:#5DCAA5; }
+    .wtab.active-prod { background:#501313; border-color:#E24B4A; color:#F09595; }
+  }
+  .work-panel { display:none; }
+  .work-panel.visible { display:block; }
+
+  /* Tables */
   .pick-table { width:100%; border-collapse:collapse; font-size:13px; }
   .pick-table th { font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-tertiary); padding:6px 8px; text-align:left; background:var(--bg-secondary); border-bottom:0.5px solid var(--border-md); }
-  .pick-table th:first-child { border-radius:var(--radius) 0 0 0; }
-  .pick-table th:last-child  { border-radius:0 var(--radius) 0 0; }
-  .pick-table td { padding:7px 8px; border-bottom:0.5px solid var(--border); vertical-align:middle; }
+  .pick-table td { padding:6px 8px; border-bottom:0.5px solid var(--border); vertical-align:middle; }
   .pick-table tr:last-child td { border-bottom:none; }
-  .pick-table tr:hover td { background:var(--bg-secondary); }
-  .pick-table input[type="text"] { font-family:monospace; font-size:12px; color:var(--text); background:var(--bg); border:0.5px solid var(--border-md); border-radius:6px; padding:5px 8px; outline:none; width:100%; min-width:90px; }
+  .pick-table tr:hover td { background:rgba(0,0,0,0.015); }
+  .pick-table input[type="text"] { font-family:monospace; font-size:12px; color:var(--text); background:var(--bg); border:0.5px solid var(--border-md); border-radius:6px; padding:5px 8px; outline:none; width:100%; min-width:70px; }
   .pick-table input[type="text"]:focus { border-color:var(--border-strong); }
-  .tipo-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:500; white-space:nowrap; }
-  .badge-top  { background:#EEEDFE; color:#3C3489; }
-  .badge-cu   { background:#E1F5EE; color:#085041; }
-  .badge-box  { background:#E6F1FB; color:#185FA5; }
-  .badge-etc  { background:#FFF3CD; color:#7D4A00; }
+  .pick-table input[type="number"] { font-family:inherit; font-size:12px; color:var(--text); background:var(--bg); border:0.5px solid var(--border-md); border-radius:6px; padding:5px 6px; outline:none; text-align:center; width:52px; -moz-appearance:textfield; }
+  .pick-table input[type="number"]::-webkit-outer-spin-button,
+  .pick-table input[type="number"]::-webkit-inner-spin-button { -webkit-appearance:none; }
+
+  /* Badges */
+  .tipo-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:20px; font-size:11px; font-weight:500; white-space:nowrap; }
+  .badge-top   { background:#EEEDFE; color:#3C3489; }
+  .badge-cu    { background:#E1F5EE; color:#085041; }
+  .badge-box   { background:#E6F1FB; color:#185FA5; }
+  .badge-etc   { background:#FFF3CD; color:#7D4A00; }
+  .badge-ifu   { background:#F0F0F0; color:#555; }
   @media (prefers-color-scheme:dark) {
     .badge-top{background:#26215C;color:#AFA9EC} .badge-cu{background:#04342C;color:#5DCAA5}
     .badge-box{background:#042C53;color:#85B7EB} .badge-etc{background:#3D2800;color:#FAC775}
+    .badge-ifu{background:#2a2a2a;color:#aaa}
   }
-  .qty-cell { font-weight:500; text-align:center; }
-  .udm-cell { color:var(--text-tertiary); font-size:12px; text-align:center; }
-  .check-cell { text-align:center; }
-  .row-check { width:18px; height:18px; accent-color:#1D9E75; cursor:pointer; }
-  .pick-table tr.done td { color:var(--text-tertiary); }
-  .pick-table tr.done .tipo-badge { opacity:0.5; }
+
+  /* Disponibilità toggle */
+  .disp-toggle { display:flex; border-radius:6px; overflow:hidden; border:0.5px solid var(--border-md); }
+  .disp-btn { flex:1; padding:5px 8px; font-family:inherit; font-size:11px; font-weight:500; border:none; background:var(--bg); color:var(--text-tertiary); cursor:pointer; transition:all 0.12s; white-space:nowrap; }
+  .disp-btn:hover { background:var(--bg-secondary); }
+  .disp-btn.sel-ok  { background:#E1F5EE; color:#085041; }
+  .disp-btn.sel-no  { background:#FCEBEB; color:#A32D2D; }
+
+  /* Row states */
+  .pick-table tr.row-ok td { }
+  .pick-table tr.row-no td { background:rgba(226,75,74,0.04); color:var(--text-tertiary); }
+  .pick-table tr.row-no .tipo-badge { opacity:0.55; }
+  .pick-table tr.row-done td { color:var(--text-tertiary); }
+  .pick-table tr.row-done .tipo-badge { opacity:0.45; }
+
+  /* Production row */
+  .prod-qty { display:inline-block; font-size:12px; font-weight:600; padding:2px 10px; background:#FCEBEB; color:#A32D2D; border-radius:20px; border:0.5px solid #E24B4A; }
 
   /* Empty state */
   .empty-state { text-align:center; padding:2rem; color:var(--text-tertiary); font-size:13px; }
@@ -93,10 +123,10 @@
   .totali-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
   .tot-card { background:var(--bg-secondary); border:0.5px solid var(--border); border-radius:var(--radius); padding:12px; text-align:center; }
   .tot-label { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-tertiary); margin-bottom:4px; }
-  .tot-val { font-size:22px; font-weight:500; color:var(--text); }
+  .tot-val { font-size:22px; font-weight:500; }
   .tot-udm { font-size:11px; color:var(--text-tertiary); }
 
-  /* Note aggiuntive */
+  /* Field / textarea */
   .field { display:flex; flex-direction:column; gap:4px; }
   .field label { font-size:11px; font-weight:500; color:var(--text-secondary); letter-spacing:0.04em; }
   .field textarea { font-family:inherit; font-size:13px; color:var(--text); background:var(--bg); border:0.5px solid var(--border-md); border-radius:var(--radius); padding:7px 10px; outline:none; resize:vertical; min-height:68px; line-height:1.5; width:100%; }
@@ -106,40 +136,36 @@
   .divider { border:none; border-top:0.5px solid var(--border); margin:1.75rem 0; }
   .firma-row { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:end; }
   .firma-box { display:flex; flex-direction:column; gap:6px; }
-  .firma-box label { font-size:11px; font-weight:500; color:var(--text-secondary); letter-spacing:0.04em; }
+  .firma-box label { font-size:11px; font-weight:500; color:var(--text-secondary); }
   .firma-line { border:none; border-bottom:0.5px solid var(--border-strong); padding:28px 0 4px; }
   .firma-input { font-family:inherit; font-size:13px; color:var(--text); background:transparent; border:none; border-bottom:0.5px solid var(--border-md); padding:4px 0; outline:none; width:100%; }
   .firma-input:focus { border-color:var(--border-strong); }
 
-  /* Actions */
-  .action-row { display:flex; gap:8px; margin-top:1.75rem; justify-content:flex-end; }
+  /* Btn */
+  .btn-add { display:flex; align-items:center; gap:6px; font-family:inherit; font-size:12px; color:var(--text-secondary); background:none; border:0.5px dashed var(--border-md); border-radius:var(--radius); padding:7px 12px; cursor:pointer; margin-top:8px; transition:all 0.15s; }
+  .btn-add:hover { border-color:var(--border-strong); color:var(--text); background:var(--bg-secondary); }
+  .btn-del { background:none; border:none; cursor:pointer; color:var(--text-tertiary); font-size:15px; padding:3px 5px; border-radius:6px; transition:all 0.15s; line-height:1; }
+  .btn-del:hover { color:#E24B4A; background:#FCEBEB; }
+  .action-row { display:flex; gap:8px; margin-top:1.75rem; justify-content:flex-end; flex-wrap:wrap; }
   .btn { font-family:inherit; font-size:13px; padding:9px 18px; border:0.5px solid var(--border-md); border-radius:var(--radius); background:var(--bg); color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
   .btn:hover { background:var(--bg-secondary); color:var(--text); border-color:var(--border-strong); }
   .btn-primary { background:var(--text); color:var(--bg); border-color:var(--text); }
   .btn-primary:hover { opacity:0.85; color:var(--bg); }
 
-  /* Add row */
-  .btn-add { display:flex; align-items:center; gap:6px; font-family:inherit; font-size:12px; color:var(--text-secondary); background:none; border:0.5px dashed var(--border-md); border-radius:var(--radius); padding:7px 12px; cursor:pointer; margin-top:8px; transition:all 0.15s; }
-  .btn-add:hover { border-color:var(--border-strong); color:var(--text); background:var(--bg-secondary); }
-  .btn-del { background:none; border:none; cursor:pointer; color:var(--text-tertiary); font-size:15px; padding:3px 5px; border-radius:6px; transition:all 0.15s; line-height:1; }
-  .btn-del:hover { color:#E24B4A; background:#FCEBEB; }
-
   @media print {
     body { background:white; padding:0; }
     .page { border:none; border-radius:0; padding:1.5cm 2cm; }
-    .action-row, .load-strip, .btn-add, .btn-del { display:none; }
-    .row-check { display:none; }
+    .action-row, .load-strip, .btn-add, .btn-del, .work-tabs, .disp-toggle { display:none !important; }
+    .work-panel { display:block !important; }
     ::placeholder { color:transparent !important; opacity:0 !important; }
-    .pick-table th:first-child, .pick-table th:last-child { border-radius:0; }
   }
   @media (max-width:600px) {
     .page { padding:1.25rem 1rem 2rem; }
-    .info-grid, .totali-grid, .firma-row { grid-template-columns:1fr; }
+    .info-grid, .firma-row { grid-template-columns:1fr; }
     .totali-grid { grid-template-columns:1fr 1fr; }
     .form-header { flex-direction:column; align-items:flex-start; }
     .form-meta { text-align:left; }
     .meta-field { align-items:flex-start; }
-    .load-strip { flex-wrap:wrap; }
   }
 </style>
 </head>
@@ -147,19 +173,10 @@
 <div class="page">
 
   <div class="form-header">
-    <div>
-      <h1>Modulo magazzino</h1>
-      <h2>Scheda Prelievo Materiali</h2>
-    </div>
+    <div><h1>Modulo magazzino</h1><h2>Scheda Prelievo Materiali</h2></div>
     <div class="form-meta">
-      <div class="meta-field">
-        <label>Rif. Richiesta</label>
-        <div class="nr-display" id="nr-display">—</div>
-      </div>
-      <div class="meta-field" style="margin-top:8px;">
-        <label>Data prelievo</label>
-        <input type="date" id="data-prelievo" style="font-size:13px;border:none;border-bottom:0.5px solid var(--border-md);border-radius:0;padding:2px 0;background:transparent;color:var(--text);text-align:right;outline:none;font-family:inherit;">
-      </div>
+      <div class="meta-field"><label>Rif. Richiesta</label><div class="nr-display" id="nr-display">—</div></div>
+      <div class="meta-field" style="margin-top:8px;"><label>Data prelievo</label><input type="date" id="data-prelievo"></div>
     </div>
   </div>
 
@@ -168,98 +185,84 @@
     Il prelievo dei materiali verrà effettuato osservando la regola del <strong>&nbsp;FIFO&nbsp;</strong> (First In, First Out)
   </div>
 
-  <!-- CARICA FILE -->
   <div class="load-strip">
     <label><i class="ti ti-file-import"></i>&nbsp; Carica dati richiesta</label>
-    <input type="file" id="json-file" accept=".json" onchange="loadFromFile(this)" style="display:none;">
     <button class="btn-load" onclick="document.getElementById('json-file').click()">
       <i class="ti ti-upload"></i> Seleziona file RC…
     </button>
     <span class="load-status" id="load-status"></span>
-    <span style="font-size:11px;color:var(--text-tertiary);margin-left:4px;" id="filename-display"></span>
+    <span style="font-size:11px;color:var(--text-tertiary);" id="filename-display"></span>
   </div>
 
-  <!-- DATI INTESTAZIONE -->
   <div class="info-grid">
-    <div class="info-field">
-      <label>Richiedente</label>
-      <div class="info-val" id="info-richiedente">—</div>
+    <div class="info-field"><label>Richiedente</label><div class="info-val" id="info-richiedente">—</div></div>
+    <div class="info-field"><label>Reparto</label><div class="info-val" id="info-reparto">—</div></div>
+    <div class="info-field"><label>Data richiesta originale</label><div class="info-val" id="info-data">—</div></div>
+    <div class="info-field"><label>Operatore magazzino</label><input type="text" class="info-val" id="operatore" placeholder="Nome operatore"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><i class="ti ti-package"></i>Materiali</div>
+    <div class="work-tabs">
+      <button class="wtab active-pick" onclick="switchWorkTab('pick')">
+        <i class="ti ti-building-warehouse"></i> Prelievo magazzino <span class="wtab-badge" id="badge-pick"></span>
+      </button>
+      <button class="wtab" onclick="switchWorkTab('prod')">
+        <i class="ti ti-tool"></i> Da produrre <span class="wtab-badge" id="badge-prod"></span>
+      </button>
     </div>
-    <div class="info-field">
-      <label>Reparto</label>
-      <div class="info-val" id="info-reparto">—</div>
+
+    <!-- PRELIEVO -->
+    <div id="panel-pick" class="work-panel visible">
+      <table class="pick-table">
+        <thead><tr>
+          <th style="width:32px;">✓</th>
+          <th style="width:130px;">Tipo</th>
+          <th>Descrizione</th>
+          <th style="width:105px;">N° Lotto</th>
+          <th style="width:52px;">QTY</th>
+          <th style="width:38px;">UDM</th>
+          <th style="width:130px;">Disponibilità</th>
+          <th style="width:28px;"></th>
+        </tr></thead>
+        <tbody id="pick-body">
+          <tr id="empty-pick"><td colspan="8"><div class="empty-state"><i class="ti ti-inbox"></i>Carica un file RC o aggiungi righe manualmente.</div></td></tr>
+        </tbody>
+      </table>
+      <button class="btn-add" onclick="addManualRow()"><i class="ti ti-plus"></i> Aggiungi riga manuale</button>
     </div>
-    <div class="info-field">
-      <label>Data richiesta originale</label>
-      <div class="info-val" id="info-data">—</div>
-    </div>
-    <div class="info-field">
-      <label>Operatore magazzino</label>
-      <input type="text" class="info-val editable" id="operatore" placeholder="Nome operatore">
+
+    <!-- PRODUZIONE -->
+    <div id="panel-prod" class="work-panel">
+      <table class="pick-table">
+        <thead><tr>
+          <th style="width:130px;">Tipo</th>
+          <th>Descrizione</th>
+          <th style="width:90px;">Qty</th>
+          <th>Note produzione</th>
+        </tr></thead>
+        <tbody id="prod-body">
+          <tr id="empty-prod"><td colspan="4"><div class="empty-state"><i class="ti ti-check"></i>Nessun articolo da produrre.</div></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- TABELLA PRELIEVO -->
   <div class="section">
-    <div class="section-title"><i class="ti ti-package"></i>Materiali da prelevare</div>
-    <table class="pick-table">
-      <thead>
-        <tr>
-          <th style="width:36px;">✓</th>
-          <th>Tipo</th>
-          <th>Codice / Descrizione</th>
-          <th style="width:120px;">N° Lotto</th>
-          <th style="width:60px;">QTY</th>
-          <th style="width:44px;">UDM</th>
-          <th style="width:32px;"></th>
-        </tr>
-      </thead>
-      <tbody id="pick-body">
-        <tr>
-          <td colspan="7"><div class="empty-state"><i class="ti ti-inbox"></i>Carica una richiesta RC per popolare la scheda, oppure aggiungi righe manualmente.</div></td>
-        </tr>
-      </tbody>
-    </table>
-    <button class="btn-add" onclick="addManualRow()"><i class="ti ti-plus"></i> Aggiungi riga manuale</button>
-  </div>
-
-  <!-- TOTALI -->
-  <div class="section">
-    <div class="section-title"><i class="ti ti-sum"></i>Totali</div>
+    <div class="section-title"><i class="ti ti-sum"></i>Totali prelievo</div>
     <div class="totali-grid">
-      <div class="tot-card">
-        <div class="tot-label">Capi tessili</div>
-        <div class="tot-val" id="tot-top">0</div>
-        <div class="tot-udm">pz</div>
-      </div>
-      <div class="tot-card">
-        <div class="tot-label">Control Unit</div>
-        <div class="tot-val" id="tot-cu">0</div>
-        <div class="tot-udm">pz</div>
-      </div>
-      <div class="tot-card">
-        <div class="tot-label">Etichette</div>
-        <div class="tot-val" id="tot-etc">0</div>
-        <div class="tot-udm">pz</div>
-      </div>
-      <div class="tot-card">
-        <div class="tot-label">IFU</div>
-        <div class="tot-val" id="tot-ifu">0</div>
-        <div class="tot-udm">pz</div>
-      </div>
+      <div class="tot-card"><div class="tot-label">Capi tessili</div><div class="tot-val" id="tot-top">0</div><div class="tot-udm">pz</div></div>
+      <div class="tot-card"><div class="tot-label">Control Unit</div><div class="tot-val" id="tot-cu">0</div><div class="tot-udm">pz</div></div>
+      <div class="tot-card"><div class="tot-label">Etichette</div><div class="tot-val" id="tot-etc">0</div><div class="tot-udm">pz</div></div>
+      <div class="tot-card"><div class="tot-label">IFU</div><div class="tot-val" id="tot-ifu">0</div><div class="tot-udm">pz</div></div>
     </div>
   </div>
 
-  <!-- NOTE -->
   <div class="section">
-    <div class="field">
-      <label>Note magazzino</label>
-      <textarea placeholder="Annotazioni, eccezioni, sostituzioni, problemi di stock…"></textarea>
-    </div>
+    <div class="field"><label>Note magazzino</label><textarea placeholder="Annotazioni, eccezioni, sostituzioni, problemi di stock…"></textarea></div>
   </div>
 
   <hr class="divider">
-
   <div class="firma-row">
     <div class="firma-box">
       <label>Operatore — nome e firma</label>
@@ -274,191 +277,294 @@
 
   <div class="action-row">
     <button class="btn" onclick="resetForm()"><i class="ti ti-refresh"></i> Nuova scheda</button>
-    <button class="btn btn-primary" onclick="stampa()"><i class="ti ti-printer"></i> Stampa / Salva PDF</button>
+    <button class="btn" onclick="stampa('pick')"><i class="ti ti-printer"></i> Stampa prelievo</button>
+    <button class="btn btn-primary" onclick="stampa('prod')"><i class="ti ti-tool"></i> Stampa produzione</button>
   </div>
 
 </div>
 
+<input type="file" id="json-file" accept=".json" onchange="loadFromFile(this)"
+  style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+
 <script>
   document.getElementById('data-prelievo').value = new Date().toISOString().split('T')[0];
 
-  const TIPO_MAP = {
-    top:  { label:'Capo tessile',  cls:'badge-top',  totId:'tot-top'  },
-    cu:   { label:'Control Unit',  cls:'badge-cu',   totId:'tot-cu'   },
-    box:  { label:'Box',           cls:'badge-box',  totId:'tot-top'  },
-    etc:  { label:'Etichetta',     cls:'badge-etc',  totId:'tot-etc'  },
-    ifu:  { label:'IFU',           cls:'badge-etc',  totId:'tot-ifu'  },
-    altro:{ label:'Altro',         cls:'badge-box',  totId:'tot-top'  },
+  const TIPO_CFG = {
+    top:    { label:'Capo tessile',       cls:'badge-top',  tot:'tot-top' },
+    cu:     { label:'Control Unit',       cls:'badge-cu',   tot:'tot-cu'  },
+    box:    { label:'Box',                cls:'badge-box',  tot:'tot-top' },
+    etctop: { label:'Etichetta Top',      cls:'badge-etc',  tot:'tot-etc' },
+    etccu:  { label:'Etichetta CU',       cls:'badge-etc',  tot:'tot-etc' },
+    etckit: { label:'Etichetta Kit',      cls:'badge-etc',  tot:'tot-etc' },
+    ifu:    { label:'IFU',                cls:'badge-ifu',  tot:'tot-ifu' },
+    altro:  { label:'Altro',              cls:'badge-box',  tot:'tot-top' },
   };
 
+  let rowId = 0;
+
+  /* ── File load ── */
   function loadFromFile(input) {
     const file = input.files[0];
     if (!file) return;
-    const status   = document.getElementById('load-status');
-    const filename = document.getElementById('filename-display');
-    filename.textContent = file.name;
+    document.getElementById('filename-display').textContent = file.name;
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = e => {
       try {
         const data = JSON.parse(e.target.result);
-        if (!data.nr) throw new Error('File non valido');
+        if (!data.nr) throw new Error();
         populateForm(data);
-        status.textContent = '✓ Caricato: ' + data.nr;
-        status.className = 'load-status ok';
-      } catch(err) {
-        status.textContent = '✗ File non riconosciuto';
-        status.className = 'load-status err';
+        document.getElementById('load-status').textContent = '✓ ' + data.nr;
+        document.getElementById('load-status').className = 'load-status ok';
+      } catch {
+        document.getElementById('load-status').textContent = '✗ File non riconosciuto';
+        document.getElementById('load-status').className = 'load-status err';
       }
     };
     reader.readAsText(file);
-    // reset input so same file can be reloaded
     input.value = '';
   }
 
   function populateForm(data) {
-
-    document.getElementById('nr-display').textContent = data.nr;
+    document.getElementById('nr-display').textContent       = data.nr;
     document.getElementById('info-richiedente').textContent = data.richiedente || '—';
-    document.getElementById('info-reparto').textContent     = data.reparto    || '—';
-    document.getElementById('info-data').textContent        = data.data       || '—';
+    document.getElementById('info-reparto').textContent     = data.reparto     || '—';
+    document.getElementById('info-data').textContent        = data.data        || '—';
+    clearTables();
 
-    clearTable();
+    (data.top || []).forEach(r =>
+      addPickRow('top', capitalize(r.sesso) + ' — Taglia ' + r.taglia, r.qty));
 
-    // top tessile
-    (data.top || []).forEach(r => {
-      const desc = (r.sesso.charAt(0).toUpperCase() + r.sesso.slice(1)) + ' — Taglia ' + r.taglia;
-      addRow('top', 'Capo tessile', desc, r.qty);
+    (data.cu || []).forEach(r =>
+      addPickRow('cu', [r.ref, r.fw, r.batt].filter(Boolean).join(' · '), r.qty));
+
+    const boxLabels = { standard:'Standard', starter:'Starter Pack', refill:'Refill' };
+    Object.entries(data.box || {}).forEach(([k, qty]) => {
+      if (qty > 0) addPickRow('box', 'Box ' + boxLabels[k], qty);
     });
 
-    // control unit
-    (data.cu || []).forEach(r => {
-      const desc = [r.ref, r.fw, r.batt].filter(Boolean).join(' · ');
-      addRow('cu', 'Control Unit', desc, r.qty);
-    });
+    const totTop = (data.top||[]).reduce((s,r)=>s+r.qty, 0);
+    const totCU  = (data.cu||[]).reduce((s,r)=>s+r.qty, 0);
+    const totBox = Object.values(data.box||{}).reduce((s,v)=>s+v, 0);
+    if (totTop > 0) addPickRow('etctop', 'Etichetta capo tessile',  totTop);
+    if (totCU  > 0) addPickRow('etccu',  'Etichetta Control Unit',  totCU);
+    if (totBox > 0) addPickRow('etckit', 'Etichetta Kit',           totBox);
+    if (totBox > 0) addPickRow('ifu',    'Foglio istruzioni (IFU)', totBox);
 
-    // box
-    const boxTypes = { standard:'Standard', starter:'Starter Pack', refill:'Refill' };
-    Object.entries(data.box || {}).forEach(([k,qty]) => {
-      if (qty > 0) addRow('box', 'Box ' + boxTypes[k], 'Box spedizione — ' + boxTypes[k], qty);
-    });
-
-    // etichette e IFU — calcola automaticamente dal totale box
-    const totBox = Object.values(data.box||{}).reduce((s,v)=>s+v,0);
-    if (totBox > 0) {
-      addRow('etc', 'Etichetta', 'Etichetta prodotto', totBox);
-      addRow('ifu', 'IFU', 'Foglio istruzioni (IFU)', totBox);
-    }
-
-    updateTotali();
+    updateAll();
   }
 
-  function clearTable() {
-    document.getElementById('pick-body').innerHTML = '';
-  }
+  function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
-  function addRow(tipo, tipoLabel, descrizione, qty) {
+  /* ── Add rows ── */
+  function addPickRow(tipo, descrizione, qty) {
     const tbody = document.getElementById('pick-body');
-    const tr = document.createElement('tr');
-    const t = TIPO_MAP[tipo] || TIPO_MAP.altro;
-    tr.dataset.tipo = tipo;
-    tr.dataset.qty  = qty;
+    const empty = document.getElementById('empty-pick');
+    if (empty) empty.remove();
+
+    const id  = 'r' + (++rowId);
+    const cfg = TIPO_CFG[tipo] || TIPO_CFG.altro;
+    const tr  = document.createElement('tr');
+    tr.id = id; tr.dataset.tipo = tipo; tr.dataset.qty = qty;
+    tr.className = 'row-ok';
     tr.innerHTML = `
-      <td class="check-cell"><input type="checkbox" class="row-check" onchange="toggleDone(this)"></td>
-      <td><span class="tipo-badge ${t.cls}">${tipoLabel || t.label}</span></td>
+      <td style="text-align:center;"><input type="checkbox" class="row-check" style="width:16px;height:16px;accent-color:#1D9E75;cursor:pointer;" onchange="toggleDone(this)"></td>
+      <td><span class="tipo-badge ${cfg.cls}">${cfg.label}</span></td>
       <td>${descrizione}</td>
-      <td><input type="text" placeholder="Lotto…" style="font-family:monospace;font-size:12px;"></td>
-      <td class="qty-cell">${qty}</td>
-      <td class="udm-cell">pz</td>
-      <td><button class="btn-del" onclick="delRow(this)"><i class="ti ti-x"></i></button></td>`;
+      <td><input type="text" placeholder="Lotto…"></td>
+      <td style="text-align:center;font-weight:500;">${qty}</td>
+      <td style="text-align:center;font-size:12px;color:var(--text-tertiary);">pz</td>
+      <td>
+        <div class="disp-toggle">
+          <button class="disp-btn sel-ok" onclick="setDisp('${id}','ok',this)">✓ Disponibile</button>
+          <button class="disp-btn"        onclick="setDisp('${id}','no',this)">✗ Non disp.</button>
+        </div>
+      </td>
+      <td><button class="btn-del" onclick="delPickRow('${id}')"><i class="ti ti-x"></i></button></td>`;
     tbody.appendChild(tr);
   }
 
   function addManualRow() {
     const tbody = document.getElementById('pick-body');
-    // rimuovi empty state se presente
-    const empty = tbody.querySelector('.empty-state');
-    if (empty) empty.closest('tr').remove();
+    const empty = document.getElementById('empty-pick');
+    if (empty) empty.remove();
 
-    const tr = document.createElement('tr');
-    tr.dataset.tipo = 'altro';
-    tr.dataset.qty  = 0;
+    const id  = 'r' + (++rowId);
+    const opts = Object.entries(TIPO_CFG).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('');
+    const tr  = document.createElement('tr');
+    tr.id = id; tr.dataset.tipo = 'altro'; tr.dataset.qty = 1;
+    tr.className = 'row-ok';
     tr.innerHTML = `
-      <td class="check-cell"><input type="checkbox" class="row-check" onchange="toggleDone(this)"></td>
+      <td style="text-align:center;"><input type="checkbox" class="row-check" style="width:16px;height:16px;accent-color:#1D9E75;cursor:pointer;" onchange="toggleDone(this)"></td>
       <td>
-        <select onchange="updateRowTipo(this)" style="font-family:inherit;font-size:12px;color:var(--text);background:var(--bg);border:0.5px solid var(--border-md);border-radius:6px;padding:4px 6px;outline:none;">
-          <option value="top">Capo tessile</option>
-          <option value="cu">Control Unit</option>
-          <option value="box">Box</option>
-          <option value="etc">Etichetta</option>
-          <option value="ifu">IFU</option>
-          <option value="altro">Altro</option>
+        <select onchange="this.closest('tr').dataset.tipo=this.value;syncProdRow('${id}');updateAll();"
+          style="font-family:inherit;font-size:12px;color:var(--text);background:var(--bg);border:0.5px solid var(--border-md);border-radius:6px;padding:4px 6px;outline:none;max-width:118px;">
+          ${opts}
         </select>
       </td>
-      <td><input type="text" placeholder="Descrizione…" style="font-size:13px;width:100%;border:0.5px solid var(--border-md);border-radius:6px;padding:5px 8px;outline:none;background:var(--bg);color:var(--text);font-family:inherit;"></td>
-      <td><input type="text" placeholder="Lotto…" style="font-family:monospace;font-size:12px;"></td>
-      <td><input type="number" min="0" value="1" style="width:52px;font-family:inherit;font-size:13px;color:var(--text);background:var(--bg);border:0.5px solid var(--border-md);border-radius:6px;padding:5px 6px;outline:none;-moz-appearance:textfield;text-align:center;" oninput="updateTotali()"></td>
-      <td class="udm-cell">pz</td>
-      <td><button class="btn-del" onclick="delRow(this)"><i class="ti ti-x"></i></button></td>`;
+      <td><input type="text" placeholder="Descrizione…" oninput="syncProdRow('${id}')"
+        style="font-size:13px;width:100%;border:0.5px solid var(--border-md);border-radius:6px;padding:5px 8px;outline:none;background:var(--bg);color:var(--text);font-family:inherit;"></td>
+      <td><input type="text" placeholder="Lotto…"></td>
+      <td style="text-align:center;"><input type="number" min="0" value="1"
+        style="width:48px;font-family:inherit;font-size:12px;color:var(--text);background:var(--bg);border:0.5px solid var(--border-md);border-radius:6px;padding:5px 4px;outline:none;text-align:center;-moz-appearance:textfield;"
+        oninput="this.closest('tr').dataset.qty=this.value;syncProdRow('${id}');updateAll();"
+        onkeypress="if(!/[0-9]/.test(event.key))event.preventDefault()"></td>
+      <td style="text-align:center;font-size:12px;color:var(--text-tertiary);">pz</td>
+      <td>
+        <div class="disp-toggle">
+          <button class="disp-btn sel-ok" onclick="setDisp('${id}','ok',this)">✓ Disponibile</button>
+          <button class="disp-btn"        onclick="setDisp('${id}','no',this)">✗ Non disp.</button>
+        </div>
+      </td>
+      <td><button class="btn-del" onclick="delPickRow('${id}')"><i class="ti ti-x"></i></button></td>`;
     tbody.appendChild(tr);
-    updateTotali();
+    updateAll();
   }
 
-  function updateRowTipo(sel) {
-    sel.closest('tr').dataset.tipo = sel.value;
-    updateTotali();
-  }
+  /* ── Disponibilità toggle ── */
+  function setDisp(id, state, clickedBtn) {
+    const tr = document.getElementById(id);
+    if (!tr) return;
 
-  function delRow(btn) {
-    btn.closest('tr').remove();
-    if (!document.querySelector('#pick-body tr')) {
-      document.getElementById('pick-body').innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="ti ti-inbox"></i>Nessun materiale. Aggiungi righe manualmente.</div></td></tr>';
+    // aggiorna toggle visual
+    const btns = clickedBtn.closest('.disp-toggle').querySelectorAll('.disp-btn');
+    btns.forEach(b => b.classList.remove('sel-ok','sel-no'));
+    clickedBtn.classList.add(state === 'ok' ? 'sel-ok' : 'sel-no');
+
+    tr.className = state === 'ok' ? 'row-ok' : 'row-no';
+
+    if (state === 'no') {
+      addProdRow(id);
+      switchWorkTab('prod');
+    } else {
+      removeProdRow(id);
     }
-    updateTotali();
+    updateAll();
+  }
+
+  /* ── Produzione rows ── */
+  function addProdRow(pickId) {
+    const pickTr = document.getElementById(pickId);
+    if (!pickTr) return;
+
+    const tipo   = pickTr.dataset.tipo;
+    const qty    = pickTr.dataset.qty;
+    const cfg    = TIPO_CFG[tipo] || TIPO_CFG.altro;
+
+    // ricava descrizione dalla cella testo (3a colonna, indice 2)
+    const descCell = pickTr.cells[2];
+    const descInput = descCell.querySelector('input[type="text"]');
+    const descrizione = descInput ? descInput.value : descCell.textContent.trim();
+
+    const empty = document.getElementById('empty-prod');
+    if (empty) empty.remove();
+
+    // aggiorna se esiste già
+    let prodTr = document.getElementById('prod-' + pickId);
+    if (!prodTr) {
+      prodTr = document.createElement('tr');
+      prodTr.id = 'prod-' + pickId;
+      document.getElementById('prod-body').appendChild(prodTr);
+    }
+    prodTr.innerHTML = `
+      <td><span class="tipo-badge ${cfg.cls}">${cfg.label}</span></td>
+      <td>${descrizione}</td>
+      <td style="text-align:center;"><span class="prod-qty">${qty} pz</span></td>
+      <td><input type="text" placeholder="Note per la produzione…"
+        style="font-size:12px;width:100%;border:0.5px solid var(--border-md);border-radius:6px;padding:5px 8px;outline:none;background:var(--bg);color:var(--text);font-family:inherit;"></td>`;
+  }
+
+  function removeProdRow(pickId) {
+    const prodTr = document.getElementById('prod-' + pickId);
+    if (prodTr) prodTr.remove();
+    checkProdEmpty();
+  }
+
+  // aggiorna riga produzione se esiste (usata quando si modifica desc/qty in riga manuale)
+  function syncProdRow(pickId) {
+    if (document.getElementById('prod-' + pickId)) addProdRow(pickId);
+  }
+
+  function checkProdEmpty() {
+    const tbody = document.getElementById('prod-body');
+    if (!tbody.querySelector('tr[id^="prod-"]')) {
+      tbody.innerHTML = '<tr id="empty-prod"><td colspan="4"><div class="empty-state"><i class="ti ti-check"></i>Nessun articolo da produrre.</div></td></tr>';
+    }
+  }
+
+  function delPickRow(id) {
+    const tr = document.getElementById(id);
+    if (tr) tr.remove();
+    removeProdRow(id);
+    if (!document.querySelector('#pick-body tr[id]')) {
+      document.getElementById('pick-body').innerHTML = '<tr id="empty-pick"><td colspan="8"><div class="empty-state"><i class="ti ti-inbox"></i>Nessun materiale. Aggiungi righe manualmente.</div></td></tr>';
+    }
+    updateAll();
   }
 
   function toggleDone(cb) {
-    cb.closest('tr').classList.toggle('done', cb.checked);
+    const tr = cb.closest('tr');
+    tr.classList.toggle('row-done', cb.checked);
   }
 
-  function updateTotali() {
+  /* ── Tabs ── */
+  function switchWorkTab(tab) {
+    ['pick','prod'].forEach(t => document.getElementById('panel-'+t).classList.toggle('visible', t===tab));
+    document.querySelectorAll('.wtab').forEach((btn,i) => {
+      btn.className = 'wtab' + (['pick','prod'][i]===tab ? ' active-'+['pick','prod'][i] : '');
+    });
+  }
+
+  /* ── Totali ── */
+  function updateAll() {
     const tots = { top:0, cu:0, etc:0, ifu:0 };
-    document.querySelectorAll('#pick-body tr[data-tipo]').forEach(tr => {
+    document.querySelectorAll('#pick-body tr[id]').forEach(tr => {
+      if (!tr.dataset.tipo) return;
       const tipo = tr.dataset.tipo;
-      // quantità: da input numerico (riga manuale) o da dataset
       const qtyInput = tr.querySelector('input[type="number"]');
       const qty = qtyInput ? (parseInt(qtyInput.value)||0) : (parseInt(tr.dataset.qty)||0);
-      if      (tipo==='top')          tots.top += qty;
-      else if (tipo==='cu')           tots.cu  += qty;
-      else if (tipo==='etc')          tots.etc += qty;
-      else if (tipo==='ifu')          tots.ifu += qty;
+      if      (tipo === 'top')                             tots.top += qty;
+      else if (tipo === 'cu')                              tots.cu  += qty;
+      else if (['etctop','etccu','etckit'].includes(tipo)) tots.etc += qty;
+      else if (tipo === 'ifu')                             tots.ifu += qty;
     });
     document.getElementById('tot-top').textContent = tots.top;
     document.getElementById('tot-cu').textContent  = tots.cu;
     document.getElementById('tot-etc').textContent = tots.etc;
     document.getElementById('tot-ifu').textContent = tots.ifu;
+
+    const nPick = document.querySelectorAll('#pick-body tr[id]').length;
+    const nProd = document.querySelectorAll('#prod-body tr[id^="prod-"]').length;
+    document.getElementById('badge-pick').textContent = nPick || '';
+    document.getElementById('badge-prod').textContent = nProd || '';
+  }
+
+  /* ── Reset / Stampa ── */
+  function clearTables() {
+    document.getElementById('pick-body').innerHTML = '<tr id="empty-pick"><td colspan="8"><div class="empty-state"><i class="ti ti-inbox"></i>Carica un file RC o aggiungi righe manualmente.</div></td></tr>';
+    document.getElementById('prod-body').innerHTML = '<tr id="empty-prod"><td colspan="4"><div class="empty-state"><i class="ti ti-check"></i>Nessun articolo da produrre.</div></td></tr>';
+    updateAll();
   }
 
   function resetForm() {
     document.getElementById('nr-display').textContent = '—';
-    document.getElementById('info-richiedente').textContent = '—';
-    document.getElementById('info-reparto').textContent = '—';
-    document.getElementById('info-data').textContent = '—';
+    ['info-richiedente','info-reparto','info-data'].forEach(id => document.getElementById(id).textContent='—');
     document.getElementById('operatore').value = '';
     document.getElementById('load-status').textContent = '';
     document.getElementById('filename-display').textContent = '';
     document.getElementById('data-prelievo').value = new Date().toISOString().split('T')[0];
     document.querySelectorAll('textarea').forEach(el=>el.value='');
     document.querySelectorAll('.firma-input').forEach(el=>el.value='');
-    clearTable();
-    document.getElementById('pick-body').innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="ti ti-inbox"></i>Carica una richiesta RC per popolare la scheda, oppure aggiungi righe manualmente.</div></td></tr>';
-    updateTotali();
+    clearTables();
+    switchWorkTab('pick');
   }
 
-  function stampa() {
+  function stampa(tab) {
+    switchWorkTab(tab);
     const rc = document.getElementById('nr-display').textContent;
+    const suffix = tab === 'prod' ? '-PROD' : '-PM';
     const prevTitle = document.title;
-    document.title = 'PM-' + (rc !== '—' ? rc : new Date().toISOString().split('T')[0]);
-    setTimeout(() => { window.print(); document.title = prevTitle; }, 100);
+    document.title = (rc !== '—' ? rc : 'Scheda') + suffix;
+    setTimeout(() => { window.print(); document.title = prevTitle; }, 150);
   }
 </script>
 </body>
