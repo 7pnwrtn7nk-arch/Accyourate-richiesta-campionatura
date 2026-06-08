@@ -159,25 +159,63 @@ function opApri(idx) {
   if (!o) return;
   document.getElementById('op-modal-nr').textContent = o.nr;
   const statoColor = o.stato === 'Aperto' ? 'var(--orange)' : o.stato === 'Annullato' ? 'var(--red)' : 'var(--green)';
-  const compRows = (o.componenti||[]).map(c => {
+
+  const compCards = (o.componenti||[]).map(c => {
+    const taglie = c.taglie || c.taglieDetail || null;
     let taglieHtml = '';
-    if (c.taglieDetail) {
-      const td = c.taglieDetail;
-      if (td.donna && Object.keys(td.donna).length) taglieHtml += `<div style="font-size:10px;color:var(--text-sec)"><strong>Donna:</strong> ${Object.entries(td.donna).map(([t,q])=>t+':'+q).join(', ')}</div>`;
-      if (td.uomo && Object.keys(td.uomo).length) taglieHtml += `<div style="font-size:10px;color:var(--text-sec)"><strong>Uomo:</strong> ${Object.entries(td.uomo).map(([t,q])=>t+':'+q).join(', ')}</div>`;
+    if (taglie) {
+      const generi = Object.keys(taglie);
+      if (generi.length) {
+        const allTaglie = [...new Set(generi.flatMap(g => Object.keys(taglie[g])))];
+        taglieHtml += `<div style="margin-top:10px;border-top:.5px solid var(--border);padding-top:8px">`;
+        taglieHtml += `<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-ter);font-weight:500;margin-bottom:6px">Dettaglio taglie</div>`;
+        taglieHtml += `<table style="border-collapse:collapse;font-size:11px;width:100%">`;
+        taglieHtml += `<thead><tr><th style="text-align:left;padding:2px 6px 4px 0;color:var(--text-sec);font-weight:500"></th>`;
+        allTaglie.forEach(t => { taglieHtml += `<th style="text-align:center;padding:2px 6px 4px;color:var(--text-ter);font-weight:500">${t}</th>`; });
+        taglieHtml += `<th style="text-align:center;padding:2px 0 4px 6px;color:var(--text-ter);font-weight:500">Tot.</th></tr></thead><tbody>`;
+        generi.forEach(g => {
+          const rowQtys = allTaglie.map(t => taglie[g][t] || 0);
+          const tot = rowQtys.reduce((a,b)=>a+b,0);
+          if (!tot) return;
+          taglieHtml += `<tr><td style="padding:3px 8px 3px 0;font-weight:500;color:var(--text-sec);white-space:nowrap">${g}</td>`;
+          rowQtys.forEach(q => { taglieHtml += `<td style="text-align:center;padding:3px 6px;${q>0?'font-weight:600;color:var(--text)':'color:var(--text-ter)'}">${q>0?q:'—'}</td>`; });
+          taglieHtml += `<td style="text-align:center;padding:3px 0 3px 6px;font-weight:700;color:var(--brand)">${tot}</td></tr>`;
+        });
+        taglieHtml += `</tbody></table></div>`;
+      }
     }
-    return `<tr><td>${c.tipo}</td><td style="text-align:center;font-weight:600">${c.qtyMancante} pz</td><td>${c.fornitore||'—'}</td><td style="font-family:monospace;font-size:11px">${c.lotto||'—'}${taglieHtml}</td></tr>`;
+    const modLine = c.modello ? `<div style="font-size:11px;color:var(--brand);font-weight:500;margin-top:2px">Modello: ${c.modello}</div>` : '';
+    const descLine = c.descrizione ? `<div style="font-size:11px;color:var(--text-sec);margin-top:2px">${c.descrizione}</div>` : '';
+    return `<div style="border:.5px solid var(--border-md);border-radius:var(--radius);padding:13px 16px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">${c.tipo}</div>
+          ${modLine}${descLine}
+        </div>
+        <div style="background:var(--brand);color:#fff;border-radius:20px;padding:3px 12px;font-size:14px;font-weight:700;white-space:nowrap;margin-left:12px">${c.qtyMancante} pz</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-ter);font-weight:500;margin-bottom:3px">Fornitore</div>
+          <div style="font-size:12px;color:var(--text)">${c.fornitore||'—'}</div>
+        </div>
+        <div>
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-ter);font-weight:500;margin-bottom:3px">N° Lotto</div>
+          <div style="font-size:12px;font-family:monospace;color:var(--text)">${c.lotto||'—'}</div>
+        </div>
+      </div>
+      ${taglieHtml}
+    </div>`;
   }).join('');
+
   document.getElementById('op-modal-body').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:8px 0 16px">
-      <div><div style="font-size:10px;color:var(--text-ter);text-transform:uppercase;font-weight:500;margin-bottom:2px">Da RC / RP</div><div style="font-family:monospace;font-size:13px">${o.nrRC||'—'}</div></div>
-      <div><div style="font-size:10px;color:var(--text-ter);text-transform:uppercase;font-weight:500;margin-bottom:2px">Data</div><div style="font-size:13px">${fmtData(o.data)}</div></div>
-      <div><div style="font-size:10px;color:var(--text-ter);text-transform:uppercase;font-weight:500;margin-bottom:2px">Stato</div><div style="font-size:13px;font-weight:600;color:${statoColor}">${o.stato}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0 16px;padding-bottom:14px;border-bottom:.5px solid var(--border)">
+      <div><div style="font-size:9px;color:var(--text-ter);text-transform:uppercase;letter-spacing:.1em;font-weight:500;margin-bottom:3px">Da RC / RP</div><div style="font-family:monospace;font-size:13px;font-weight:600">${o.nrRC||'—'}</div></div>
+      <div><div style="font-size:9px;color:var(--text-ter);text-transform:uppercase;letter-spacing:.1em;font-weight:500;margin-bottom:3px">Data</div><div style="font-size:13px">${fmtData(o.data)}</div></div>
+      <div><div style="font-size:9px;color:var(--text-ter);text-transform:uppercase;letter-spacing:.1em;font-weight:500;margin-bottom:3px">Stato</div><div style="font-size:13px;font-weight:700;color:${statoColor}">${o.stato}</div></div>
     </div>
-    <table class="data-table" style="font-size:12px">
-      <thead><tr><th>Materiale</th><th style="text-align:center">Qty</th><th>Fornitore</th><th>Lotto / Taglie</th></tr></thead>
-      <tbody>${compRows}</tbody>
-    </table>`;
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec);margin-bottom:10px">${(o.componenti||[]).length} componente${(o.componenti||[]).length!==1?'i':''} richiesto${(o.componenti||[]).length!==1?'i':''}</div>
+    ${compCards}`;
   document.getElementById('op-detail-modal').dataset.idx = idx;
   document.getElementById('op-detail-modal').classList.add('open');
 }
@@ -192,15 +230,44 @@ function opStampa() {
   const o = ordProd[idx];
   if (!o) return;
   const statoColor = o.stato === 'Aperto' ? '#e07a00' : o.stato === 'Annullato' ? '#c0392b' : '#27ae60';
+
   const compRows = (o.componenti||[]).map(c => {
+    const taglie = c.taglie || c.taglieDetail || null;
     let taglieHtml = '';
-    if (c.taglieDetail) {
-      const td = c.taglieDetail;
-      if (td.donna && Object.keys(td.donna).length) taglieHtml += '<br><small><strong>Donna:</strong> '+Object.entries(td.donna).map(([t,q])=>t+':'+q).join(', ')+'</small>';
-      if (td.uomo && Object.keys(td.uomo).length) taglieHtml += '<br><small><strong>Uomo:</strong> '+Object.entries(td.uomo).map(([t,q])=>t+':'+q).join(', ')+'</small>';
+    if (taglie) {
+      const generi = Object.keys(taglie);
+      if (generi.length) {
+        const allTaglie = [...new Set(generi.flatMap(g => Object.keys(taglie[g])))];
+        taglieHtml += `<div style="margin-top:8px;padding-top:6px;border-top:1px solid #eee">`;
+        taglieHtml += `<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#999;font-weight:600;margin-bottom:4px">Dettaglio taglie</div>`;
+        taglieHtml += `<table style="border-collapse:collapse;font-size:11px"><thead><tr><th style="text-align:left;padding:2px 8px 3px 0;color:#666"></th>`;
+        allTaglie.forEach(t => { taglieHtml += `<th style="text-align:center;padding:2px 6px 3px;color:#666;font-weight:500">${t}</th>`; });
+        taglieHtml += `<th style="text-align:center;padding:2px 0 3px 8px;color:#444;font-weight:600">Tot.</th></tr></thead><tbody>`;
+        generi.forEach(g => {
+          const rowQtys = allTaglie.map(t => taglie[g][t] || 0);
+          const tot = rowQtys.reduce((a,b)=>a+b,0);
+          if (!tot) return;
+          taglieHtml += `<tr><td style="padding:3px 8px 3px 0;font-weight:600;color:#555">${g}</td>`;
+          rowQtys.forEach(q => { taglieHtml += `<td style="text-align:center;padding:3px 6px;${q>0?'font-weight:700':'color:#ccc'}">${q>0?q:'—'}</td>`; });
+          taglieHtml += `<td style="text-align:center;padding:3px 0 3px 8px;font-weight:700;color:#1a6fc4">${tot}</td></tr>`;
+        });
+        taglieHtml += `</tbody></table></div>`;
+      }
     }
-    return `<tr><td style="padding:8px 10px;border-bottom:1px solid #e8e8e8">${c.tipo}</td><td style="padding:8px 10px;border-bottom:1px solid #e8e8e8;text-align:center;font-weight:700">${c.qtyMancante} pz</td><td style="padding:8px 10px;border-bottom:1px solid #e8e8e8">${c.fornitore||'—'}</td><td style="padding:8px 10px;border-bottom:1px solid #e8e8e8;font-family:monospace;font-size:11px">${c.lotto||'—'}${taglieHtml}</td></tr>`;
+    const modLine = c.modello ? `<div style="font-size:11px;color:#1a6fc4;font-weight:500;margin-top:2px">Modello: ${c.modello}</div>` : '';
+    const descLine = c.descrizione ? `<div style="font-size:11px;color:#666;margin-top:2px">${c.descrizione}</div>` : '';
+    return `<tr>
+      <td style="padding:12px 12px;border-bottom:1px solid #eee;vertical-align:top">
+        <div style="font-size:13px;font-weight:600;color:#222">${c.tipo}</div>${modLine}${descLine}${taglieHtml}
+      </td>
+      <td style="padding:12px;border-bottom:1px solid #eee;text-align:center;vertical-align:top;white-space:nowrap">
+        <span style="background:#1a6fc4;color:#fff;border-radius:16px;padding:3px 10px;font-size:13px;font-weight:700">${c.qtyMancante} pz</span>
+      </td>
+      <td style="padding:12px;border-bottom:1px solid #eee;vertical-align:top">${c.fornitore||'—'}</td>
+      <td style="padding:12px;border-bottom:1px solid #eee;vertical-align:top;font-family:monospace;font-size:11px">${c.lotto||'—'}</td>
+    </tr>`;
   }).join('');
+
   const overlay = document.getElementById('op-print-overlay');
   overlay.innerHTML = `<div style="font-family:system-ui,sans-serif;padding:0;background:#fff;color:#222">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #222;padding-bottom:12px;margin-bottom:22px">
@@ -214,7 +281,12 @@ function opStampa() {
     </div>
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#555;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e0e0e0">Componenti richiesti</div>
     <table style="width:100%;border-collapse:collapse;font-size:13px">
-      <thead><tr style="background:#f5f5f5"><th style="padding:7px 10px;border-bottom:2px solid #ccc;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Materiale</th><th style="padding:7px 10px;border-bottom:2px solid #ccc;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Qty</th><th style="padding:7px 10px;border-bottom:2px solid #ccc;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Fornitore</th><th style="padding:7px 10px;border-bottom:2px solid #ccc;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">N° Lotto / Taglie</th></tr></thead>
+      <thead><tr style="background:#f5f5f5">
+        <th style="padding:7px 12px;border-bottom:2px solid #ccc;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Materiale / Modello</th>
+        <th style="padding:7px 12px;border-bottom:2px solid #ccc;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Qty</th>
+        <th style="padding:7px 12px;border-bottom:2px solid #ccc;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Fornitore</th>
+        <th style="padding:7px 12px;border-bottom:2px solid #ccc;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">N° Lotto</th>
+      </tr></thead>
       <tbody>${compRows}</tbody>
     </table>
     <div style="margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px">
@@ -226,12 +298,6 @@ function opStampa() {
   window.print();
   document.body.classList.remove('printing-op');
 }
- /* ══════════════════════════════════════════════════════════ */
-/* RICHIESTA DI PRODUZIONE */
-/* ══════════════════════════════════════════════════════════ */
-let rpCounter = parseInt(localStorage.getItem('rp_counter')||'1'); let rpArchive = loadState('rp_archive', []);  const CATEGORIA_PRODUZIONE = [   {val:'ct',  label:'Capi tessili'},   {val:'cu',  label:'Control unit'},   {val:'ecu', label:'Etichette CU'},   {val:'ect', label:'Etichette capo'},   {val:'ek',  label:'Etichette kit'},   {val:'ifu', label:'IFU'},   {val:'cav_ac', label:'Cavo USB-A/USB-C'},   {val:'cav_cc', label:'Cavo USB-C/USB-C'},   {val:'box', label:'Box spedizione'}, ];  /* produzione interna: tutto tranne CU, cavi, box */
-const PROD_INT_CATS = ['ct','ecu','ect','ek','ifu'];  function updateRPNr() {   const nr = 'RP-' + new Date().getFullYear() + '-' + String(rpCounter).padStart(3,'0');   const el1 = document.getElementById('rp-nr');   const el2 = document.getElementById('rp-nr-preview');   if(el1) el1.textContent = nr;   if(el2) el2.textContent = nr;   return nr; }    function rpFornChanged() {   const forn = document.getElementById('rp-fornitore').value;   /* aggiorna opzioni categoria nelle righe esistenti */
-document.querySelectorAll('#rp-tbody tr:not(.rp-size-row)').forEach(tr => { rpUpdateCatOptions(tr, forn); rpBuildSizeRow(tr); }); }  function rpCatOptions(forn) {   let cats = CATEGORIA_PRODUZIONE;   if (forn === 'INT')    cats = cats.filter(c => PROD_INT_CATS.includes(c.val));   if (forn === 'R13')    cats = cats.filter(c => c.val === 'cu');   if (forn === 'RB' || forn === 'HOP') cats = cats.filter(c => c.val === 'ct');   if (forn === 'EXTCAV') cats = cats.filter(c => c.val === 'cav_ac' || c.val === 'cav_cc');   if (forn === 'EXTBOX') cats = cats.filter(c => c.val === 'box');   return cats; }  function rpUpdateCatOptions(tr, forn) {   const catSel = tr.querySelector('.rp-cat-sel');   if (!catSel) return;   const cur = catSel.value;   const cats = rpCatOptions(forn);   catSel.innerHTML = '<option value="">-- categoria --</option>' + cats.map(c=>`<option value="${c.val}"${c.val===cur?' selected':''}>${c.label}</option>`).join(''); }
 
 function rpCatChanged(tr) { rpBuildSizeRow(tr); rpUpdateTotale(tr); }
 function rpModChanged(tr) { rpBuildSizeRow(tr); rpUpdateTotale(tr); }
@@ -279,7 +345,7 @@ function rpUpdateTotale(tr) {
 const materialiConLotto = [];   righe.forEach(tr => {     const cat  = tr.querySelector('.rp-cat-sel')?.value;     const mod  = tr.querySelector('.rp-mod-sel')?.value;     const desc = tr.querySelector('.rp-desc')?.value;     const qty  = parseInt(tr.querySelector('.rp-qty')?.value)||0;     if (!cat || !qty) return;     /* read size breakdown for ct rows */     const sizeRow = tr.nextElementSibling;     const hasSizes = sizeRow && sizeRow.classList.contains('rp-size-row');     let taglieDetail = null; let lotPerTaglia = false;     if (hasSizes && cat === 'ct') {       taglieDetail = {};       sizeRow.querySelectorAll('.rp-size-qty').forEach(inp => {         const g = inp.dataset.genere; const t = inp.dataset.taglia; const q = parseInt(inp.value)||0;         if (q > 0) { if (!taglieDetail[g]) taglieDetail[g] = {}; taglieDetail[g][t] = q; }       });       lotPerTaglia = sizeRow.querySelector('.rp-lot-per-taglia')?.checked || false;     }     const lotto = rpGenLotto(cat, forn);     /* aggiorna display lotto nella riga */
 const lottoCell = tr.querySelectorAll('td')[5];     if (lottoCell) { lottoCell.innerHTML = `<span style="color:var(--brand);font-weight:500">${lotto}</span>`; }     materialiConLotto.push({cat, catLabel: CAT_LABELS[cat]||cat, modello:mod, descrizione:desc, qty, lotto, forn, taglie:taglieDetail, lotPerTaglia});   });    if (!materialiConLotto.length) { alert('Controlla che tutti i materiali abbiano categoria e quantita.'); return; }    /* Salva la richiesta */
 const entry = {     nr, forn, dataCons, note,     data: new Date().toISOString().split('T')[0],     materiali: materialiConLotto,     stato: 'In attesa',     ts: new Date().toISOString()   };   rpArchive.unshift(entry);   saveState('rp_archive', rpArchive);   rpCounter++;   localStorage.setItem('rp_counter', rpCounter);    /* Crea ordine di produzione automatico */
-const ordNr = 'OP-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-4);   const fornLabels = {INT:'Produzione interna',R13:'R13 Technology',RB:'R&B Mode',HOP:'Hoplun',EXTCAV:'Fornitore esterno (Cavi)',EXTBOX:'Fornitore esterno (Box)'};   let ordProd = loadState('ct_ordprod', []);   ordProd.unshift({     nr: ordNr, nrRC: nr, data: entry.data,     componenti: materialiConLotto.map(m=>({tipo:m.catLabel, qtyMancante:m.qty, fornitore:fornLabels[forn]||forn, lotto:m.lotto})),     stato: 'Aperto', ts: entry.ts   });   saveState('ct_ordprod', ordProd);    updateRPNr(); updateNavBadges(); renderRichProd();   alert('Richiesta ' + nr + ' confermata. Ordine di produzione ' + ordNr + ' creato automaticamente.'); }  function renderRichProd() {   updateRPNr();   document.getElementById('rp-archive-count').textContent = rpArchive.length;   document.getElementById('rp-list-count').textContent = '(' + rpArchive.length + ')';   const tbody = document.getElementById('rp-table-body');   if (!rpArchive.length) {     tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="ti ti-clipboard-list"></i>Nessuna richiesta ancora</td></tr>';     return;   }   const fornLabels = {INT:'Produzione interna',R13:'R13 Technology',RB:'R&B Mode',HOP:'Hoplun',EXTCAV:'Fornitore cavi',EXTBOX:'Fornitore box'};   tbody.innerHTML = rpArchive.map((e,i) => {     const statoCls = e.stato==='Completato' ? 'color:var(--green);font-weight:600' : e.stato==='Annullato' ? 'color:var(--red)' : 'color:var(--orange);font-weight:600';     const matList = (e.materiali||[]).map(m=>{  let taglieStr = '';  if (m.taglie) {    taglieStr = '<div style="font-size:10px;color:var(--text-ter);margin-top:2px;line-height:1.6">' +      Object.entries(m.taglie).map(([g,sizes])=>        g + ':' + Object.entries(sizes).map(([t,q])=>`${t} ×${q}`).join(', ')      ).join(' | ') + '</div>';  }  return `<div style="font-size:11px">${m.catLabel}${m.modello?'  '+m.modello:''}: <strong>${m.qty} pz</strong> <span style="font-family:monospace;font-size:10px;color:var(--brand)">${m.lotto}</span>${taglieStr}</div>`;}).join('');     return `<tr>       <td style="font-family:monospace;font-weight:500;color:var(--brand)">${e.nr}</td>       <td style="font-size:11px;color:var(--text-ter)">${fmtData(e.data)}</td>       <td style="font-size:12px">${fornLabels[e.forn]||e.forn}</td>       <td style="font-size:11px;color:var(--text-ter)">${fmtData(e.dataCons)||'&#8212;'}</td>       <td>${matList}</td>       <td><span style="${statoCls}">${e.stato}</span></td>       <td style="display:flex;gap:4px">         ${e.stato==='In attesa'           ? `<button class="btn btn-green" style="font-size:11px;padding:3px 8px" onclick="rpCompletato(${i})"><i class="ti ti-circle-check"></i> Completato</button>              <button class="btn" style="font-size:11px;padding:3px 8px;color:var(--red);border-color:var(--red)" onclick="rpAnnulla(${i})"><i class="ti ti-ban"></i></button>`           : `<button class="btn-del" onclick="rpElimina(${i})" title="Rimuovi"><i class="ti ti-trash"></i></button>`}       </td>     </tr>`;   }).join(''); }  function rpCompletato(i) {   if (!confirm('Segna come completata e carica i materiali in magazzino?')) return;   rpArchive[i].stato = 'Completato';   /* carica automaticamente i materiali in magazzino */
+const ordNr = 'OP-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-4);   const fornLabels = {INT:'Produzione interna',R13:'R13 Technology',RB:'R&B Mode',HOP:'Hoplun',EXTCAV:'Fornitore esterno (Cavi)',EXTBOX:'Fornitore esterno (Box)'};   let ordProd = loadState('ct_ordprod', []);   ordProd.unshift({     nr: ordNr, nrRC: nr, data: entry.data,     componenti: materialiConLotto.map(m=>({tipo:m.catLabel, qtyMancante:m.qty, fornitore:fornLabels[forn]||forn, lotto:m.lotto, modello:m.modello||null, taglie:m.taglie||null})),     stato: 'Aperto', ts: entry.ts   });   saveState('ct_ordprod', ordProd);    updateRPNr(); updateNavBadges(); renderRichProd();   alert('Richiesta ' + nr + ' confermata. Ordine di produzione ' + ordNr + ' creato automaticamente.'); }  function renderRichProd() {   updateRPNr();   document.getElementById('rp-archive-count').textContent = rpArchive.length;   document.getElementById('rp-list-count').textContent = '(' + rpArchive.length + ')';   const tbody = document.getElementById('rp-table-body');   if (!rpArchive.length) {     tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="ti ti-clipboard-list"></i>Nessuna richiesta ancora</td></tr>';     return;   }   const fornLabels = {INT:'Produzione interna',R13:'R13 Technology',RB:'R&B Mode',HOP:'Hoplun',EXTCAV:'Fornitore cavi',EXTBOX:'Fornitore box'};   tbody.innerHTML = rpArchive.map((e,i) => {     const statoCls = e.stato==='Completato' ? 'color:var(--green);font-weight:600' : e.stato==='Annullato' ? 'color:var(--red)' : 'color:var(--orange);font-weight:600';     const matList = (e.materiali||[]).map(m=>{  let taglieStr = '';  if (m.taglie) {    taglieStr = '<div style="font-size:10px;color:var(--text-ter);margin-top:2px;line-height:1.6">' +      Object.entries(m.taglie).map(([g,sizes])=>        g + ':' + Object.entries(sizes).map(([t,q])=>`${t} ×${q}`).join(', ')      ).join(' | ') + '</div>';  }  return `<div style="font-size:11px">${m.catLabel}${m.modello?'  '+m.modello:''}: <strong>${m.qty} pz</strong> <span style="font-family:monospace;font-size:10px;color:var(--brand)">${m.lotto}</span>${taglieStr}</div>`;}).join('');     return `<tr>       <td style="font-family:monospace;font-weight:500;color:var(--brand)">${e.nr}</td>       <td style="font-size:11px;color:var(--text-ter)">${fmtData(e.data)}</td>       <td style="font-size:12px">${fornLabels[e.forn]||e.forn}</td>       <td style="font-size:11px;color:var(--text-ter)">${fmtData(e.dataCons)||'&#8212;'}</td>       <td>${matList}</td>       <td><span style="${statoCls}">${e.stato}</span></td>       <td style="display:flex;gap:4px">         ${e.stato==='In attesa'           ? `<button class="btn btn-green" style="font-size:11px;padding:3px 8px" onclick="rpCompletato(${i})"><i class="ti ti-circle-check"></i> Completato</button>              <button class="btn" style="font-size:11px;padding:3px 8px;color:var(--red);border-color:var(--red)" onclick="rpAnnulla(${i})"><i class="ti ti-ban"></i></button>`           : `<button class="btn-del" onclick="rpElimina(${i})" title="Rimuovi"><i class="ti ti-trash"></i></button>`}       </td>     </tr>`;   }).join(''); }  function rpCompletato(i) {   if (!confirm('Segna come completata e carica i materiali in magazzino?')) return;   rpArchive[i].stato = 'Completato';   /* carica automaticamente i materiali in magazzino */
 const e = rpArchive[i];   (e.materiali||[]).forEach(m => {     carichi.push({       id: Date.now() + Math.random(),       data: new Date().toISOString().split('T')[0],       cat: m.cat, catLabel: m.catLabel,       modello: m.modello||'', taglia:'', genere:'',       qty: m.qty, produttore: e.forn, lotto: m.lotto,       note: 'Da richiesta produzione ' + e.nr,       ts: new Date().toISOString()     });   });   saveState('ct_carichi', carichi);   saveState('rp_archive', rpArchive);   /* chiudi ordine di produzione collegato */
 let ordProd = loadState('ct_ordprod', []);   const op = ordProd.find(o=>o.nrRC===e.nr);   if (op) { op.stato = 'Completato'; saveState('ct_ordprod', ordProd); }   renderCarTable(); renderDashboard(); updateNavBadges(); renderRichProd();   alert('Materiali caricati in magazzino automaticamente.'); }  function rpAnnulla(i) {   if (!confirm('Annullare questa richiesta?')) return;   rpArchive[i].stato = 'Annullato';   saveState('rp_archive', rpArchive);   renderRichProd(); updateNavBadges(); }  function rpElimina(i) {   if (!confirm('Rimuovere questa richiesta dalla lista?')) return;   rpArchive.splice(i, 1);   saveState('rp_archive', rpArchive);   renderRichProd(); updateNavBadges(); }  function resetRP() {   document.getElementById('rp-fornitore').value = '';   document.getElementById('rp-note').value = '';   document.getElementById('rp-data-req').value = new Date().toISOString().split('T')[0];   document.getElementById('rp-data-cons').value = '';   document.getElementById('rp-tbody').innerHTML = '';   updateRPNr(); }  function resetRPCounter() {   if (!confirm('Azzerare contatore RP?')) return;   rpCounter=1; rpArchive=[];   localStorage.setItem('rp_counter', rpCounter);   saveState('rp_archive', []);   updateRPNr(); updateNavBadges(); renderRichProd(); }  function showRPArchive() { navTo('richprod', null); }  function pmInitModelloSel() {
   const sel = document.getElementById('pm-modello-sel');
