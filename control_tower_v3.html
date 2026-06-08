@@ -47,6 +47,36 @@ function calcPrelevataPerLotto() {
   const pl = {};
   prelievi.forEach(p => { (p.righe||[]).forEach(r => { if (r.lotto) pl[r.lotto] = (pl[r.lotto]||0) + (parseInt(r.qty)||0); }); });
   return pl;
+}
+/* Net stock keyed by 'cat|modello' — used for model-specific availability checks */
+function calcNetQtyPerCatModello() {
+  /* lotto → {cat, modello} from carichi */
+  const lottoInfo = {};
+  carichi.forEach(c => { if (c.lotto && c.cat) lottoInfo[c.lotto] = {cat: c.cat, modello: c.modello||''}; });
+  /* carichi by cat|modello */
+  const caricata = {};
+  carichi.forEach(c => {
+    if (!c.cat) return;
+    const key = c.cat + '|' + (c.modello||'');
+    caricata[key] = (caricata[key]||0) + (parseInt(c.qty)||0);
+  });
+  /* prelievi: attribute to modello via lotto if possible */
+  const prelevata = {};
+  prelievi.forEach(p => {
+    (p.righe||[]).forEach(r => {
+      const cat = PM_TIPO_CAT[r.tipo];
+      if (!cat) return;
+      const info = r.lotto ? lottoInfo[r.lotto] : null;
+      const modello = (info && info.cat === cat) ? info.modello : '';
+      const key = cat + '|' + modello;
+      prelevata[key] = (prelevata[key]||0) + (parseInt(r.qty)||0);
+    });
+  });
+  const net = {};
+  Object.keys(caricata).forEach(key => {
+    net[key] = Math.max(0, (caricata[key]||0) - (prelevata[key]||0));
+  });
+  return net;
 }  const CAT_LABELS = {ct:'Capi tessili',cu:'Control unit',ecu:'Etichette CU',ect:'Etichette capo',ek:'Etichette kit',ifu:'IFU',cav_ac:'Cavo USB-A/USB-C',cav_cc:'Cavo USB-C/USB-C',box:'Box spedizione'}; const PM_TIPI = ['Capo tessile','Control unit','Etich. CU','Etich. capo','Etich. kit','IFU','Cavo USB-A/USB-C','Cavo USB-C/USB-C']; const PM_TID  = {'Capo tessile':'ct','Control unit':'cu2','Etich. CU':'ecu','Etich. capo':'ect','Etich. kit':'ek','IFU':'ifu','Cavo USB-A/USB-C':'cav_ac','Cavo USB-C/USB-C':'cav_cc'}; const PM_TIPO_CAT = {'Capo tessile':'ct','Control unit':'cu','Etich. CU':'ecu','Etich. capo':'ect','Etich. kit':'ek','IFU':'ifu','Cavo USB-A/USB-C':'cav_ac','Cavo USB-C/USB-C':'cav_cc'};  /* ══════════════════════════════════════════════════════════ */
 /* NAV */
 /* ══════════════════════════════════════════════════════════ */
@@ -119,14 +149,15 @@ function rcGeneraPrelievo(rc) {   /* Calcola componenti kit */
 /* N kit = N CU (ogni CU = 1 kit) */
 const nKit = rc.totCU || Math.ceil(rc.totTop / 2) || rc.boxTot || 0;   if (!nKit && !rc.totTop && !rc.totCU) { alert('Nessun componente da prelevare.'); return; }    /* Righe prelievo */
 const righe = [];    /* Top tessili (dalla RC, già specificati per modello/taglia/sesso) */
-rc.top.forEach(r => {     if (r.qty > 0) {       righe.push({         tipo: 'Capo tessile',         codice: r.sesso ? r.sesso.toUpperCase().slice(0,1) : '',         descrizione: 'Top tessile ' + (r.sesso||'') + ' ' + (r.taglia||''),         lotto: '', qty: r.qty, udm: 'pz',         _auto: true       });     }   });    /* CU */
+rc.top.forEach(r => {     if (r.qty > 0) {       righe.push({         tipo: 'Capo tessile',         modello: r.modello||'',         codice: r.sesso ? r.sesso.toUpperCase().slice(0,1) : '',         descrizione: 'Top tessile ' + (r.modello ? r.modello+' ' : '') + (r.sesso||'') + ' ' + (r.taglia||''),         lotto: '', qty: r.qty, udm: 'pz',         _auto: true       });     }   });    /* CU */
 rc.cu.forEach(r => {     if (r.qty > 0) {       righe.push({         tipo: 'Control unit',         codice: r.ref ? 'AYR-CU-'+r.ref : 'AYR-CU',         descrizione: 'CU' + (r.ref?' AYR-CU-'+r.ref:'') + (r.fw?' FW'+r.fw:'') + (r.batt?' '+r.batt+'mAh':''),         lotto: '', qty: r.qty, udm: 'pz',         _auto: true       });     }   });    /* Etichetta kit (1 per kit) */
 if (nKit > 0) {     righe.push({tipo:'Etich. kit', codice:'ET-KIT', descrizione:'Etichetta kit - generata da '+rc.nr, lotto:'', qty:nKit, udm:'pz', _auto:true});   }    /* IFU (1 per kit) */
 if (nKit > 0) {     righe.push({tipo:'IFU', codice:'IFU-001', descrizione:'Foglio istruzioni - generato da '+rc.nr, lotto:'', qty:nKit, udm:'pz', _auto:true});   }    /* Verifica giacenze nette (carichi - prelievi già registrati) */
 const giacenzeNet = calcNetQtyPerCat();
+const giacenzeNetModello = calcNetQtyPerCatModello();
 const righePrel = []; /* solo disponibili → scheda prelievo */
 const ordProd   = []; /* solo mancanti  → ordine di produzione */
-righe.forEach(r => {     const cat  = PM_TIPO_CAT[r.tipo];     const disp = giacenzeNet[cat] || 0;     if (disp >= r.qty) {       r._stato = 'disponibile';       righePrel.push(r);     } else if (disp > 0) {       /* parziale: qty disponibile va in prelievo, il resto in produzione */
+righe.forEach(r => {     const cat  = PM_TIPO_CAT[r.tipo];     const dispKey = (cat && r.modello) ? cat + '|' + r.modello : null;     const disp = dispKey ? (giacenzeNetModello[dispKey] || 0) : (giacenzeNet[cat] || 0);     if (disp >= r.qty) {       r._stato = 'disponibile';       righePrel.push(r);     } else if (disp > 0) {       /* parziale: qty disponibile va in prelievo, il resto in produzione */
 const rPrel = {...r, qty: disp, _stato: 'disponibile'};       const rProd = {...r, qty: r.qty - disp, qtyMancante: r.qty - disp, _stato: 'mancante'};       righePrel.push(rPrel);       ordProd.push(rProd);     } else {       r._stato = 'mancante';       ordProd.push({...r, qtyMancante: r.qty});     }   });    /* Naviga alla sezione prelievo e pre-compila */
 navTo('prelievo', null);    /* Salva subito il prelievo nello storico (badge aggiornato) */
 const nrPM = updatePMNr();   const entryPM = {nr:nrPM, cliente:rc.richiedente||'', data:new Date().toISOString().split('T')[0], tipo:'prelievo', righe:righePrel, nrRC:rc.nr, ts:new Date().toISOString()};   prelievi.unshift(entryPM);   saveState('ct_prelievi', prelievi);   pmArchive.push({nr:nrPM, cliente:entryPM.cliente, data:entryPM.data, ts:entryPM.ts});   saveState('pm_archive', pmArchive);   pmCounter++; localStorage.setItem('pm_counter', pmCounter);   updatePMNr(); updateDashCounts(); updateNavBadges();    setTimeout(() => {     document.getElementById('pm-cliente').value = rc.richiedente || '';     document.getElementById('pm-tbody').innerHTML = '';      if (righePrel.length > 0) {       righePrel.forEach(r => pmAddRowData(r));     } else {       /* nessun materiale disponibile — mostra messaggio nella scheda */
