@@ -299,6 +299,9 @@ function opStampa() {
   document.body.classList.remove('printing-op');
 }
 
+function rpFornChanged() {   const forn = document.getElementById('rp-fornitore').value;   /* aggiorna opzioni categoria nelle righe esistenti */
+document.querySelectorAll('#rp-tbody tr:not(.rp-size-row)').forEach(tr => { rpUpdateCatOptions(tr, forn); rpBuildSizeRow(tr); }); }  function rpCatOptions(forn) {   let cats = CATEGORIA_PRODUZIONE;   if (forn === 'INT')    cats = cats.filter(c => PROD_INT_CATS.includes(c.val));   if (forn === 'R13')    cats = cats.filter(c => c.val === 'cu');   if (forn === 'RB' || forn === 'HOP') cats = cats.filter(c => c.val === 'ct');   if (forn === 'EXTCAV') cats = cats.filter(c => c.val === 'cav_ac' || c.val === 'cav_cc');   if (forn === 'EXTBOX') cats = cats.filter(c => c.val === 'box');   return cats; }  function rpUpdateCatOptions(tr, forn) {   const catSel = tr.querySelector('.rp-cat-sel');   if (!catSel) return;   const cur = catSel.value;   const cats = rpCatOptions(forn);   catSel.innerHTML = '<option value="">-- categoria --</option>' + cats.map(c=>`<option value="${c.val}"${c.val===cur?' selected':''}>${c.label}</option>`).join(''); }
+
 function rpCatChanged(tr) { rpBuildSizeRow(tr); rpUpdateTotale(tr); }
 function rpModChanged(tr) { rpBuildSizeRow(tr); rpUpdateTotale(tr); }
 
