@@ -160,8 +160,20 @@ function opApri(idx) {
   document.getElementById('op-modal-nr').textContent = o.nr;
   const statoColor = o.stato === 'Aperto' ? 'var(--orange)' : o.stato === 'Annullato' ? 'var(--red)' : 'var(--green)';
 
+  /* enrich legacy componenti from rp_archive when modello/taglie were not saved */
+  const rpEntry = (o.nrRC||'').startsWith('RP-')
+    ? loadState('rp_archive', []).find(e => e.nr === o.nrRC)
+    : null;
+  const rpMateriali = rpEntry ? (rpEntry.materiali||[]) : [];
+
   const compCards = (o.componenti||[]).map(c => {
-    const taglie = c.taglie || c.taglieDetail || null;
+    /* look up extra fields from the originating RP if not already on the component */
+    const rpMat = c.modello == null
+      ? rpMateriali.find(m => m.catLabel === c.tipo || m.cat === c.tipo)
+      : null;
+    const modello  = c.modello  || (rpMat && rpMat.modello)  || null;
+    const taglie   = c.taglie   || c.taglieDetail || (rpMat && rpMat.taglie) || null;
+
     let taglieHtml = '';
     if (taglie) {
       const generi = Object.keys(taglie);
@@ -184,7 +196,7 @@ function opApri(idx) {
         taglieHtml += `</tbody></table></div>`;
       }
     }
-    const modLine = c.modello ? `<div style="font-size:11px;color:var(--brand);font-weight:500;margin-top:2px">Modello: ${c.modello}</div>` : '';
+    const modLine  = modello ? `<div style="font-size:11px;color:var(--brand);font-weight:500;margin-top:2px">Modello: ${modello}</div>` : '';
     const descLine = c.descrizione ? `<div style="font-size:11px;color:var(--text-sec);margin-top:2px">${c.descrizione}</div>` : '';
     return `<div style="border:.5px solid var(--border-md);border-radius:var(--radius);padding:13px 16px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
@@ -219,7 +231,6 @@ function opApri(idx) {
   document.getElementById('op-detail-modal').dataset.idx = idx;
   document.getElementById('op-detail-modal').classList.add('open');
 }
-
 function opChiudiModal() {
   document.getElementById('op-detail-modal').classList.remove('open');
 }
@@ -231,8 +242,17 @@ function opStampa() {
   if (!o) return;
   const statoColor = o.stato === 'Aperto' ? '#e07a00' : o.stato === 'Annullato' ? '#c0392b' : '#27ae60';
 
+  /* same RP lookup as opApri to enrich legacy components */
+  const rpEntry = (o.nrRC||'').startsWith('RP-')
+    ? loadState('rp_archive', []).find(e => e.nr === o.nrRC)
+    : null;
+  const rpMateriali = rpEntry ? (rpEntry.materiali||[]) : [];
+
   const compRows = (o.componenti||[]).map(c => {
-    const taglie = c.taglie || c.taglieDetail || null;
+    const rpMat   = c.modello == null ? rpMateriali.find(m => m.catLabel === c.tipo || m.cat === c.tipo) : null;
+    const modello = c.modello || (rpMat && rpMat.modello) || null;
+    const taglie  = c.taglie || c.taglieDetail || (rpMat && rpMat.taglie) || null;
+
     let taglieHtml = '';
     if (taglie) {
       const generi = Object.keys(taglie);
@@ -254,10 +274,10 @@ function opStampa() {
         taglieHtml += `</tbody></table></div>`;
       }
     }
-    const modLine = c.modello ? `<div style="font-size:11px;color:#1a6fc4;font-weight:500;margin-top:2px">Modello: ${c.modello}</div>` : '';
+    const modLine  = modello ? `<div style="font-size:11px;color:#1a6fc4;font-weight:500;margin-top:2px">Modello: ${modello}</div>` : '';
     const descLine = c.descrizione ? `<div style="font-size:11px;color:#666;margin-top:2px">${c.descrizione}</div>` : '';
     return `<tr>
-      <td style="padding:12px 12px;border-bottom:1px solid #eee;vertical-align:top">
+      <td style="padding:12px;border-bottom:1px solid #eee;vertical-align:top">
         <div style="font-size:13px;font-weight:600;color:#222">${c.tipo}</div>${modLine}${descLine}${taglieHtml}
       </td>
       <td style="padding:12px;border-bottom:1px solid #eee;text-align:center;vertical-align:top;white-space:nowrap">
