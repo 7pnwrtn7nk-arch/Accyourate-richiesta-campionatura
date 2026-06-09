@@ -262,7 +262,7 @@ function xlParseFile(file) {
               const cell = ws[XLSX.utils.encode_cell({r:R,c:C})];
               if (cell && cell.v != null) vals.push(cell.v.toString().trim().toUpperCase());
             }
-            if (vals.includes('CU SN') || vals.includes('CU LOT')) { headerRow = R; sheetType = 'cu'; }
+            if (vals.includes('CU SN') || vals.includes('CU LOT') || (vals.includes('BATTERY') && (vals.includes('S/N')||vals.includes('SN')))) { headerRow = R; sheetType = 'cu'; }
             else if (vals.includes('MODELLO') && (vals.includes('S/N')||vals.includes('LOTTO')||vals.includes('TAGLIA'))) {
               /* registro tessile: solo sheet con nome anno (evita sheet di riepilogo) */
               if (/^\d{4}$/.test(sn)) { headerRow = R; sheetType = 'ct'; }
@@ -275,21 +275,23 @@ function xlParseFile(file) {
         if (sheetType === 'cu') {
           /* ── Registro CONTROL UNIT: ID, REF, BATTERY, CU REF, CU LOT, CU SN, DEST ── */
           /* modello/batteria/lotto compilati solo a inizio gruppo → fill-down */
-          let fREF='', fBATT='', fMOD='', fLOT='';
+          let fBATT='', fMOD='', fLOT='';
           rows.forEach(rRaw => {
             const r = {};
             Object.keys(rRaw).forEach(key => { r[key.toString().trim().toUpperCase()] = rRaw[key]; });
-            const vREF  = (r['REF']||'').toString().trim();    if (vREF)  fREF  = vREF;
-            const vBATT = (r['BATTERY']||'').toString().trim();if (vBATT) fBATT = vBATT;
-            const vMOD  = (r['CU REF']||'').toString().trim(); if (vMOD)  fMOD  = vMOD;
-            const vLOT  = (r['CU LOT']||'').toString().trim(); if (vLOT)  fLOT  = vLOT;
-            const serial = (r['CU SN']||'').toString().trim();
+            /* alias legacy (CU REF/CU LOT/CU SN/DEST) e formato uniforme (MODELLO/LOTTO/S\u2044N/...) */
+            const vBATT = (r['BATTERY']||r['BATTERIA']||'').toString().trim(); if (vBATT) fBATT = vBATT;
+            const vMOD  = (r['CU REF']||r['MODELLO']||'').toString().trim();   if (vMOD)  fMOD  = vMOD;
+            const vLOT  = (r['CU LOT']||r['LOTTO']||'').toString().trim();     if (vLOT)  fLOT  = vLOT;
+            const serial = (r['CU SN']||r['S/N']||r['SN']||'').toString().trim();
             if (!serial) return;
-            const dest = (r['DEST']||'').toString().trim();
-            const stato = dest ? 'CONSEGNATO' : 'DISPONIBILE';
+            const dest   = (r['DEST']||r['DESTINATARIO']||r['ULTIMO DESTINATARIO']||'').toString().trim();
+            const uscita = (r['USCITA DATA']||r['ULTIMA USCITA DATA']||r['DATA USCITA']||'').toString().trim();
+            const entrata= (r['ENTRATA DATA']||r['DATA ENTRATA']||r['DATA']||'').toString().trim();
+            const stato = (dest || uscita) ? 'CONSEGNATO' : 'DISPONIBILE';
             totalRows++;
             const k = ['cu', fMOD, fBATT, stato, fLOT].join('|');
-            if(!agg[k])agg[k]={cat:'cu', modello:fMOD, gen:'', taglia:'', stato, lotto:fLOT, batt:fBATT, qty:0, seriali:[], data:''};
+            if(!agg[k])agg[k]={cat:'cu', modello:fMOD, gen:'', taglia:'', stato, lotto:fLOT, batt:fBATT, qty:0, seriali:[], data:entrata};
             agg[k].qty++; agg[k].seriali.push(serial);
           });
         } else {
